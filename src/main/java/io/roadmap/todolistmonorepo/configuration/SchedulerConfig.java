@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+//пул потоков для работы с БД
 @Configuration
 public class SchedulerConfig {
 

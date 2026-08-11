@@ -49,14 +49,14 @@ public class TodoController {
 //        return Flux.fromCallable();
     }
 
-    @GetMapping("/{id}")
-    public Mono<TodoResponse> findById(@PathVariable Long id) {
-        return Mono.just(new TodoResponse(id, "Заглушка", false, Instant.now()));
-    }
+//    @GetMapping("/{id}")
+//    public Mono<TodoResponse> findById(@PathVariable Long id) {
+//        return Mono.just(new TodoResponse(id, "Заглушка", false, Instant.now()));
+//    }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<TodoResponse> create(@RequestBody TodoRequest request) {
-        return Mono.just(new TodoResponse(42L, request.title(), false, Instant.now()));
-    }
-}
+//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Mono<TodoResponse> create(@RequestBody TodoRequest request) {
+//        return Mono.just(new TodoResponse(42L, request.title(), false, Instant.now()));
+//    }
+//}
