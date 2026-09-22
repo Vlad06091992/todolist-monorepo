@@ -21,3 +21,6 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: changelog-master.xml
+jwt:
+  secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKey
+  expiration-hours: 1

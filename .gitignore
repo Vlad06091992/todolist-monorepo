@@ -1,9 +1,9 @@
 HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+core/.gradle
+core/build/
+core/!gradle/wrapper/gradle-wrapper.jar
+core/!**/src/main/**/build/
+core/!**/src/test/**/build/
 
 ### STS ###
 .apt_generated
