@@ -1,9 +1,9 @@
 HELP.md
-core/.gradle
-core/build/
-core/!gradle/wrapper/gradle-wrapper.jar
-core/!**/src/main/**/build/
-core/!**/src/test/**/build/
+task-tracker-backend/.gradle
+task-tracker-backend/build/
+task-tracker-backend/!gradle/wrapper/gradle-wrapper.jar
+task-tracker-backend/!**/src/main/**/build/
+task-tracker-backend/!**/src/test/**/build/
 
 ### STS ###
 .apt_generated
