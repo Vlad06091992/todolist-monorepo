@@ -4,8 +4,9 @@ package io.roadmap.todolistmonorepo.controller;
 import io.roadmap.todolistmonorepo.configuration.JWTUtil;
 import io.roadmap.todolistmonorepo.dto.AuthRequest;
 import io.roadmap.todolistmonorepo.dto.AuthResponse;
-import io.roadmap.todolistmonorepo.entities.User;
+import io.roadmap.todolistmonorepo.dto.UserCreateRequest;
 import io.roadmap.todolistmonorepo.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,19 +25,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public Mono<ResponseEntity<AuthResponse>> login(@RequestBody AuthRequest authRequest) {
-        return userService.findByUsername(authRequest.username())
+        return userService.findByLogin(authRequest.login())
                 .map(userDetails -> {
                     if (userDetails.getPassword().equals(authRequest.password())) {
-                        return ResponseEntity.ok(new AuthResponse(jwtUtil.generateToken(authRequest.username())));
+                        return ResponseEntity.ok(new AuthResponse(jwtUtil.generateToken(authRequest.login())));
                     } else {
                         throw new BadCredentialsException("Invalid username or password");
                     }
                 }).switchIfEmpty(Mono.error(new BadCredentialsException("Invalid username or password")));
     }
     @PostMapping("/signup")
-    public Mono<ResponseEntity<String>> signup(@RequestBody User user) {
-        user.setPassword(user.getPassword());
-        return userService.save(user)
+    public Mono<ResponseEntity<String>> signup(@Valid @RequestBody UserCreateRequest userDTO) {
+
+        return userService.save(userDTO)
                 .map(savedUser -> ResponseEntity.ok("User signed up successfully"));
     }
 
