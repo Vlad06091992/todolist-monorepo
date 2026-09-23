@@ -21,10 +21,13 @@ public class User {
     private UUID id;
 
     @Column(nullable = false, unique = true, length = 100)
-    private String username;
+    private String login;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String password;
+
+    @Column(unique = true, length = 30)
+    private String email;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

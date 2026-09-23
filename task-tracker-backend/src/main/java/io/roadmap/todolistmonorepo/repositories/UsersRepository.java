@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface UsersRepository extends JpaRepository<User, UUID> {
-    Optional<User> findByUsername(String username);
+    Optional<User> findByLogin(String login);
 //    List<Task> findByIsFinished(boolean isFinished);
     List<User> findAll ();
 
