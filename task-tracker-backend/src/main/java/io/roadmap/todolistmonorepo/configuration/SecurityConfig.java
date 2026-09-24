@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
@@ -18,6 +19,11 @@ public class SecurityConfig {
 
     public SecurityConfig(JWTAuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder getPasswordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -34,7 +40,7 @@ public class SecurityConfig {
                 .addFilterAt(jwtFilter, org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange((exchanges) ->
                         exchanges
-                                .pathMatchers("/login", "/signup").permitAll()
+                                .pathMatchers("/auth/login", "/auth/signup").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .build();
