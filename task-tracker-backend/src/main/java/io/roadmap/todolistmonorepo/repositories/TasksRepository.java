@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TasksRepository extends JpaRepository<Task, UUID> {
-    Optional<Task> findByUsername(String username);
+//    Optional<Task> findByUsername(String username);
 //    List<Task> findByIsFinished(boolean isFinished);
     List<Task> findAll ();
 
