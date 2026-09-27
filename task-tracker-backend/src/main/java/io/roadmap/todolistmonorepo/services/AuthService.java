@@ -4,6 +4,7 @@ import io.roadmap.todolistmonorepo.configuration.JWTUtil;
 import io.roadmap.todolistmonorepo.dto.AuthRequest;
 import io.roadmap.todolistmonorepo.dto.UserCreateRequest;
 import io.roadmap.todolistmonorepo.entities.User;
+import io.roadmap.todolistmonorepo.mappers.UserMapper;
 import io.roadmap.todolistmonorepo.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +22,7 @@ public class AuthService {
     private final UsersRepository usersRepository;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserMapper userMapper;
 
     public Mono<String> login(AuthRequest authRequest) {
 
@@ -37,11 +39,8 @@ public class AuthService {
     }
 
     public Mono<User> createNewUser(UserCreateRequest userDTO) {
-        User user = new User();
-        user.setPassword(bCryptPasswordEncoder.encode(userDTO.password()));
-        user.setLogin(userDTO.login());
-        user.setEmail(user.getEmail());
 
-       return userService.save(user);
+        User user = userMapper.toEntity(userDTO);
+        return userService.save(user);
     }
 }
