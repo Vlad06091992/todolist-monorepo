@@ -4,10 +4,11 @@ import io.roadmap.todolistmonorepo.dto.TaskCreateRequest;
 import io.roadmap.todolistmonorepo.entities.Task;
 import io.roadmap.todolistmonorepo.entities.User;
 import io.roadmap.todolistmonorepo.repositories.TasksRepository;
-import io.roadmap.todolistmonorepo.repositories.UsersRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
@@ -18,20 +19,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TasksService {
     private final TasksRepository tasksRepository;
-    private final UsersRepository usersRepository;
     private final Scheduler dbScheduler;
-//    private final EntityManager entityManager;
+    private final TransactionTemplate transactionTemplate;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Mono<Task> create(TaskCreateRequest taskDto, String userId){
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> transactionTemplate.execute(status -> {
+            User user = entityManager.getReference(User.class, UUID.fromString(userId));
             Task task = new Task();
-            User user = usersRepository.getReferenceById(UUID.fromString(userId));
             task.setUser(user);
             task.setDescription(taskDto.description());
             task.setFinished(false);
-            Task createdTask = tasksRepository.save(task);
-            return createdTask;
-        })
+            entityManager.persist(task);
+            entityManager.flush();
+            return task;
+        }))
                 .subscribeOn(dbScheduler);
 
 
