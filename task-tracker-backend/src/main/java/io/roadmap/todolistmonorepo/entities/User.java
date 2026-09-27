@@ -24,7 +24,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String login;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(unique = true, length = 30)
