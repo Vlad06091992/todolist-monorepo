@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .addFilterAt(jwtFilter, org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange((exchanges) ->
                         exchanges
-                                .pathMatchers("/auth/login", "/auth/signup").permitAll()
+                                .pathMatchers("/auth/sign-in", "/auth/sign-up").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .build();
