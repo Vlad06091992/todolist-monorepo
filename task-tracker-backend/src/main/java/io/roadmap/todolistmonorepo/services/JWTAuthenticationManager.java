@@ -39,6 +39,7 @@ public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) throws AuthenticationException {
+        //TODO переделать все на реактивщину
         String token = authentication.getCredentials().toString();
         String username = jwtUtil.extractUsername(token);
 

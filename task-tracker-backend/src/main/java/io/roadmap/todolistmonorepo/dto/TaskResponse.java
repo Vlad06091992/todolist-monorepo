@@ -17,16 +17,16 @@ package io.roadmap.todolistmonorepo.dto;
 
 public record TaskResponse(
         String id,
-        User user,
+        UserData user,
         String description,
         Boolean isFinished,
         String createdAt
 ) {
-    public record User(String id, String login) {}
+    public record UserData(String id, String login) {}
 
     // Дополнительный конструктор — принимает плоские аргументы
     public TaskResponse(String id, String userId, String userLogin,
                         String description, Boolean isFinished, String createdAt) {
-        this(id, new User(userId, userLogin), description, isFinished, createdAt);
+        this(id, new UserData(userId, userLogin), description, isFinished, createdAt);
     }
 }
