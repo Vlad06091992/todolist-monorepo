@@ -6,8 +6,6 @@ import io.roadmap.todolistmonorepo.entities.Task;
 import io.roadmap.todolistmonorepo.entities.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.Getter;
-import lombok.Setter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

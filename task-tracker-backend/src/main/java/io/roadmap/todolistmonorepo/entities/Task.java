@@ -30,8 +30,17 @@ public class Task {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
     @PrePersist
     private void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }
