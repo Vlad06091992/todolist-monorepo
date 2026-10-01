@@ -2,6 +2,8 @@ package io.roadmap.todolistmonorepo.services;
 
 
 import io.roadmap.todolistmonorepo.configuration.JWTUtil;
+import io.roadmap.todolistmonorepo.exceptions.InternalServerException;
+import io.roadmap.todolistmonorepo.exceptions.JwtAuthenticationException;
 import lombok.Getter;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +22,7 @@ import java.util.UUID;
 public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Getter
-    public class Credentials{
+    public class Credentials {
 
         private UUID id;
 
@@ -39,20 +41,17 @@ public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) throws AuthenticationException {
-        //TODO переделать все на реактивщину
-        String token = authentication.getCredentials().toString();
-        String username = jwtUtil.extractUsername(token);
-
-        return userService.findByLogin(username)
-                .map(userDetails -> {
-                    if (jwtUtil.validateToken(token, userDetails.getLogin())) {
-                        Credentials credentials = new Credentials(userDetails.getId());
-                        return new UsernamePasswordAuthenticationToken(
-                                userDetails.getLogin(), credentials, Collections.emptyList());
-                    } else {
-                        throw new AuthenticationException("Invalid JWT token") {};
-                    }
-                });
+        return Mono.defer(() -> {
+            String token = authentication.getCredentials().toString();
+            String username = jwtUtil.extractUsername(token);
+            return userService.findByLogin(username);
+        }).<Authentication>map(userDetails -> {
+            Credentials credentials = new Credentials(userDetails.getId());
+            return new UsernamePasswordAuthenticationToken(
+                    userDetails.getLogin(), credentials, Collections.emptyList());
+        }).onErrorResume((e) -> {
+            return Mono.error(new JwtAuthenticationException("Invalid JWT token: " + e.getMessage()));
+        });
     }
 
     public ServerAuthenticationConverter authenticationConverter() {

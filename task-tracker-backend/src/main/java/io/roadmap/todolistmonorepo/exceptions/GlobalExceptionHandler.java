@@ -48,10 +48,4 @@ public class GlobalExceptionHandler {
         Map<String, String> response = Map.of("message",ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public ResponseEntity<Object> handleTaskCreationException(JwtAuthenticationException ex) {
-        Map<String, String> response = Map.of("message",ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
 }

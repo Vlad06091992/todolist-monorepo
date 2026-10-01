@@ -26,7 +26,6 @@ public class UserService {
     public Mono<User> save(User user) {
         return findByLogin(user.getLogin())
                 .flatMap(u -> {
-                    System.out.println(u);
                     return Mono.<User>error(new UserAlreadyExistException());
                 })
                 .switchIfEmpty(Mono.fromCallable(() -> usersRepository.save(user)))
