@@ -5,6 +5,13 @@ task-tracker-backend/!gradle/wrapper/gradle-wrapper.jar
 task-tracker-backend/!**/src/main/**/build/
 task-tracker-backend/!**/src/test/**/build/
 
+
+task-tracker-email-sender/.gradle
+task-tracker-email-sender/build/
+task-tracker-email-sender/!gradle/wrapper/gradle-wrapper.jar
+task-tracker-email-sender/!**/src/main/**/build/
+task-tracker-email-sender/!**/src/test/**/build/
+task-tracker-email-sender/.env
 ### STS ###
 .apt_generated
 .classpath
