@@ -22,8 +22,15 @@ spring:
   liquibase:
     change-log: changelog-master.xml
 
-kafka:
-  bootstrap-servers: localhost:9092
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      client-id: sample-producer
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: userCreated:io.roadmap.todolistmonorepo.dto.KafkaCreateUserMessage
 
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKey
