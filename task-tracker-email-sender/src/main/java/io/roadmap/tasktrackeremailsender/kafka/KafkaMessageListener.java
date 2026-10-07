@@ -1,24 +1,23 @@
 package io.roadmap.tasktrackeremailsender.kafka;
 
+import io.roadmap.tasktrackeremailsender.dto.KafkaCreateUserMessage;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-
+@KafkaListener(topics = "EMAIL_SENDING_TASKS", groupId = "my-consumer-group")
 public class KafkaMessageListener {
 
-    public KafkaMessageListener(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    @KafkaHandler
+    public void onUserCreated(KafkaCreateUserMessage message) {
+        System.out.println("User created: " + message);
     }
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    // Simple listener consuming plain string messages
-    @KafkaListener(topics = "my-topic", groupId = "my-consumer-group")
-    public void listen(String message) {
-        System.out.println("Received message mailer: " + message);
-//        kafkaTemplate.send("my-topic-2", message);
-        kafkaTemplate.send("my-topic-2", message + "from mailer");
-    }
+    //TODO посмотреть как работает с неизвестным DTO
+//    @KafkaHandler(isDefault = true)
+//    public void onUnknown(Object message) {
+//        System.out.println("Unknown message type: " + message);
+//    }
 }

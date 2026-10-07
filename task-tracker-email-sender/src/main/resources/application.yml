@@ -1,8 +1,12 @@
+server:
+  port: 8077
+
 spring:
   config:
     import: optional:file:.env[.properties]
   application:
     name: task-tracker-email-sender
+
   mail:
     host: smtp.mail.ru
     port: 465
@@ -19,13 +23,16 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
-#  kafka:
-#    bootstrap-servers: localhost:9092
-#    consumer:
-#      group-id: my-consumer-group
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: my-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.type.mapping: >
+        userCreated:io.roadmap.tasktrackeremailsender.dto.KafkaCreateUserMessage
+#        ,other dto's
+      spring.json.trusted.packages: "io.roadmap.tasktrackeremailsender.dto"

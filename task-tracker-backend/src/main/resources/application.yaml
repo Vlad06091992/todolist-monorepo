@@ -21,6 +21,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: changelog-master.xml
+
+kafka:
+  bootstrap-servers: localhost:9092
+
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKey
   expiration-hours: 1
