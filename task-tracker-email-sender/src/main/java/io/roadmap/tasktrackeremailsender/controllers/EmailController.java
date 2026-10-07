@@ -6,6 +6,7 @@ import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -18,6 +19,7 @@ import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/email")
+@Profile("dev")
 public class EmailController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmailController.class);
