@@ -22,7 +22,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder getPasswordEncoder(){
+    public BCryptPasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -40,8 +40,10 @@ public class SecurityConfig {
                 .addFilterAt(jwtFilter, org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange((exchanges) ->
                         exchanges
-                                .pathMatchers("/auth/sign-in", "/auth/sign-up").permitAll()
-                                .anyExchange().authenticated()
+                                .pathMatchers("/auth/sign-in", "/auth/sign-up", "/tasks/statistics")
+                                .permitAll()
+                                .anyExchange()
+                                .authenticated()
                 )
                 .build();
     }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tasks")
@@ -49,6 +51,11 @@ public class TasksController {
     @GetMapping
     public Flux<TaskResponse> getTasks(Authentication authentication) {
         return tasksService.getAllByUserId(((JWTAuthenticationManager.Credentials) authentication.getCredentials()).getId());
+    }
+
+    @GetMapping("/statistics")
+    public Mono<ResponseEntity<Map<String, String>>> me() {
+        return Mono.just(ResponseEntity.ok(Map.of("hello","world")));
     }
 
 }
