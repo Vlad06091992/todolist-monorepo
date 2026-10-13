@@ -12,6 +12,13 @@ task-tracker-email-sender/!gradle/wrapper/gradle-wrapper.jar
 task-tracker-email-sender/!**/src/main/**/build/
 task-tracker-email-sender/!**/src/test/**/build/
 task-tracker-email-sender/.env
+
+task-tracker-scheduler/.gradle
+task-tracker-scheduler/build/
+task-tracker-scheduler/!gradle/wrapper/gradle-wrapper.jar
+task-tracker-scheduler/!**/src/main/**/build/
+task-tracker-scheduler/!**/src/test/**/build/
+task-tracker-scheduler/.env
 ### STS ###
 .apt_generated
 .classpath
@@ -42,3 +49,62 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# nestJS app
+
+# compiled output
+task-tracker-summarization-server/dist
+task-tracker-summarization-server/node_modules
+task-tracker-summarization-server/build
+
+# Logs
+task-tracker-summarization-server/logs
+task-tracker-summarization-server/*.log
+task-tracker-summarization-server/npm-debug.log*
+task-tracker-summarization-server/pnpm-debug.log*
+task-tracker-summarization-server/yarn-debug.log*
+task-tracker-summarization-server/yarn-error.log*
+task-tracker-summarization-server/lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
