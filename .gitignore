@@ -59,6 +59,7 @@ task-tracker-summarization-server/build
 
 # Logs
 task-tracker-summarization-server/logs
+task-tracker-summarization-server/.env
 task-tracker-summarization-server/*.log
 task-tracker-summarization-server/npm-debug.log*
 task-tracker-summarization-server/pnpm-debug.log*

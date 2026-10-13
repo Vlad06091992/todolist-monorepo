@@ -1,32 +1,25 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Chat } from './giga';
+import { GigaChatSummarization } from './giga-chat';
+import { UserDTO } from './interfaces';
 
-@Controller()
+interface CreateMessageDto {
+  payload: UserDTO[];
+}
+
+@Controller('/dev')
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly chat: Chat,
+    private readonly chat: GigaChatSummarization,
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
-  @Get('/send')
-  async sendMessage(@Query('message') message: string): Promise<any> {
+  @Post('/send')
+  async sendMessage(@Body() createDto: CreateMessageDto) {
     try {
-      const result = await this.chat.sendMessage(message);
-      debugger;
-      console.log(result);
-
-      return result;
-
-      return result;
+      return await this.chat.sendMessageWithPrompt(createDto.payload);
     } catch (e) {
       console.error(e);
-      debugger;
     }
   }
 }
