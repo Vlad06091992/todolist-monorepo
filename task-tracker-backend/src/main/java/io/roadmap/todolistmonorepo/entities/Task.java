@@ -12,7 +12,6 @@ import java.util.UUID;
 @Setter
 
 public class Task {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

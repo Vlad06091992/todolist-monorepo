@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .addFilterAt(jwtFilter, org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange((exchanges) ->
                         exchanges
-                                .pathMatchers("/auth/sign-in", "/auth/sign-up", "/tasks/statistics")
+                                .pathMatchers("/auth/sign-in", "/auth/sign-up", "/tasks/get-finished-tasks-after-date")
                                 .permitAll()
                                 .anyExchange()
                                 .authenticated()

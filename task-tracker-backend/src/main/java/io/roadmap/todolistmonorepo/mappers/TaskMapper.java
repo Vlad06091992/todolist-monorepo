@@ -29,8 +29,7 @@ public abstract class TaskMapper {
     @Mapping(target = "finished", constant = "false")
     public abstract Task toEntity(TaskCreateRequest dto, String userId);
 
-    @Mapping(target = "isFinished", constant = "false")
     @Mapping(target = "user", expression = "java(new TaskResponse.UserData(userId, userLogin))")
-    public abstract TaskResponse toResponse(Task task, String userId, String userLogin);
+    public abstract TaskResponse toResponse(Task task, String userId, String userLogin, boolean isFinished);
 
 }

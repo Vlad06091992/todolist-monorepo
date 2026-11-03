@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -53,9 +56,9 @@ public class TasksController {
         return tasksService.getAllByUserId(((JWTAuthenticationManager.Credentials) authentication.getCredentials()).getId());
     }
 
-    @GetMapping("/statistics")
-    public Mono<ResponseEntity<Map<String, String>>> me() {
-        return Mono.just(ResponseEntity.ok(Map.of("hello","world")));
+    @GetMapping("/get-finished-tasks-after-date")
+    public Flux<TaskResponse> getFinishedTasksAfterDate(@Valid @RequestParam String userId, String date) {
+        return tasksService.getFinishedTasksAfterDate(UUID.fromString(userId), LocalDateTime.parse(date));
     }
 
 }

@@ -11,6 +11,8 @@ import io.roadmap.todolistmonorepo.repositories.TasksRepository;
 import io.roadmap.todolistmonorepo.repositories.UsersRepository;
 import liquibase.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -18,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -28,6 +31,8 @@ public class TasksService {
     private final Scheduler dbScheduler;
     private final TransactionTemplate transactionTemplate;
     private final TaskMapper taskMapper;
+    private static final Logger log = LoggerFactory.getLogger(TasksService.class.getName());
+
 
 //    @PersistenceContext
 //    private EntityManager entityManager;
@@ -50,7 +55,7 @@ public class TasksService {
                     task.setDescription(taskDto.description());
                     task.setFinished(false);
                     return tasksRepository.save(task);
-                }).map(taskResponse -> taskMapper.toResponse(taskResponse, userId, userLogin))
+                }).map(taskResponse -> taskMapper.toResponse(taskResponse, userId, userLogin, false))
                 .onErrorResume(e -> switch (e) {
                     case DataAccessException ex -> Mono.error(new DatabaseException(ex));
                     default -> Mono.error(new InternalServerException(e.getMessage()));
@@ -94,7 +99,7 @@ public class TasksService {
         Flux<TaskResponse> res = Mono
                 .fromCallable(() -> tasksRepository.findAllByUser_Id(userId))
                 .flatMapMany(Flux::fromIterable)
-                .map(t -> taskMapper.toResponse(t, t.getUser().getId().toString(), t.getUser().getLogin()))
+                .map(t -> taskMapper.toResponse(t, t.getUser().getId().toString(), t.getUser().getLogin(), t.isFinished()))
                 .onErrorResume(e -> switch (e) {
                     case DataAccessException ex -> Mono.error(new DatabaseException(ex));
                     default -> Mono.error(new InternalServerException(e.getMessage()));
@@ -110,8 +115,25 @@ public class TasksService {
                 .switchIfEmpty(Mono.error(new TaskNotFoundException()))
                 .map(task -> {
                     User user = task.getUser();
-                    return taskMapper.toResponse(task, user.getId().toString(), user.getLogin());
+                    return taskMapper.toResponse(task, user.getId().toString(), user.getLogin(), task.isFinished());
                 })
+                .onErrorResume(e -> switch (e) {
+                    case DataAccessException ex -> Mono.error(new DatabaseException(ex));
+                    default -> Mono.error(new InternalServerException(e.getMessage()));
+                })
+                .subscribeOn(dbScheduler);
+    }
+
+    public Flux<TaskResponse>  getFinishedTasksAfterDate(UUID userId, LocalDateTime dateTime) {
+
+        log.info("userId: {}",userId);
+        log.info("dateTime: {}",dateTime);
+
+
+        return Mono
+                .fromCallable(() -> tasksRepository.getFinishedTasksAfterDate(userId, dateTime))
+                .flatMapMany(Flux::fromIterable)
+                .map(t -> taskMapper.toResponse(t, t.getUser().getId().toString(), t.getUser().getLogin(), t.isFinished()))
                 .onErrorResume(e -> switch (e) {
                     case DataAccessException ex -> Mono.error(new DatabaseException(ex));
                     default -> Mono.error(new InternalServerException(e.getMessage()));

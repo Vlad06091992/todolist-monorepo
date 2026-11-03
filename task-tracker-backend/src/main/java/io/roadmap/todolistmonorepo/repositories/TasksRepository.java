@@ -1,7 +1,6 @@
 package io.roadmap.todolistmonorepo.repositories;
 
 import io.roadmap.todolistmonorepo.entities.Task;
-import io.roadmap.todolistmonorepo.entities.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,9 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.List;
 
 @Repository
 public interface TasksRepository extends JpaRepository<Task, UUID> {
@@ -34,5 +34,11 @@ public interface TasksRepository extends JpaRepository<Task, UUID> {
             @Param("taskId") UUID taskId,
             @Param("userId") UUID userId,
             @Param("finished") boolean finished);
+
+
+    @EntityGraph(attributePaths = {"user"})
+    @Query("SELECT t FROM Task t WHERE t.isFinished = true AND t.user.id = :userId AND t.updatedAt > :date" )
+    @Transactional
+    List<Task> getFinishedTasksAfterDate(@Param("userId") UUID userId, @Param("date") LocalDateTime date );
 
 }
