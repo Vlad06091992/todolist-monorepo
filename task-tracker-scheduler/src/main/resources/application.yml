@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: "todo"
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: my-sceduler-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      client-id: scheduler-id
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      properties:
+#        spring.json.type.mapping: userCreated:io.roadmap.todolistmonorepo.dto.KafkaCreateUserMessage
+
+server:
+  port: 8075

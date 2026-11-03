@@ -30,7 +30,7 @@ public class ScheduledTasks {
     }
 
 
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 10000)
     public void reauest() {
         System.out.println("mock request");
        Flux<TaskResponse> res = tasksService.sendRequest("7b2f2dee-f009-42b2-b77d-1046a71cb593", "2025-11-03T14:30");
@@ -97,11 +97,11 @@ public class ScheduledTasks {
 
     }
 
-//@Scheduled(fixedRate = 10000)
-//public void sendMessageToTopic() {
-//    kafkaExample.send();
-////    System.out.println("mock request");
-////        tasksService.sendRequest();
-//}
+@Scheduled(fixedRate = 10000)
+public void sendMessageToTopic() {
+    kafkaExample.send();
+//    System.out.println("mock request");
+//        tasksService.sendRequest();
+}
 
 }
