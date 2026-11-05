@@ -1,7 +1,13 @@
 import GigaChat from 'gigachat';
 import { Agent } from 'node:https';
 import { Injectable } from '@nestjs/common';
-import { ReportDTO, Summarization, UserDTO } from './interfaces';
+import {
+  ReportDTO,
+  ReportPayload,
+  Summarization,
+  UserDTO,
+  UserSummary,
+} from './interfaces';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -30,6 +36,21 @@ export class GigaChatSummarization implements Summarization {
       httpsAgent: this.httpsAgent,
       baseUrl: 'https://api.giga.chat/v1', // Явно указываем новый адрес
     });
+  }
+
+  public mapToReport(userSummaries: UserSummary[]): ReportPayload {
+
+    console.log("mapToReport userSummaries:", userSummaries);
+
+    debugger
+
+    return {
+      payload: userSummaries.map((us) => ({
+        activeTasks: us.tasks.length,
+        completedLast24h: us.tasks,
+        login: us.login,
+      })),
+    };
   }
 
   public async sendMessageWithPrompt(

@@ -27,13 +27,30 @@ public class KafkaExample {
 //    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss:SSS z dd MMM yyyy");;
 
 
-    public void send() {
-        kafkaService
-//                .sendMessage("SCHEDULER_SENDING_TASKS", "send from scheduler")
-                .sendMessage("test", "send from scheduler")
-                .subscribe();
-    }
+//    public Mono<Void> send(Flux<SummaryResponse> messages) {
+//        return messages
+//                .flatMap(m ->{
+//                    kafkaService.sendMessage("test", m);
+//                    System.out.println("ОТПРАВЛЕНО!!!");
+//                    System.out.println(m);
+//                    return Mono.empty();
+//                })// T = SummaryRespons
+//                .then();
+//    }
 
+    public Mono<Void> send(Flux<SummaryResponse> messages) {
+
+        return messages
+                .collectList()
+                .flatMap(m -> kafkaService.sendMessage("test", m))
+                .then();
+
+//        return kafkaService
+////                .sendMessage("SCHEDULER_SENDING_TASKS", "send from scheduler")
+//                .sendMessage("test", messages)
+//                .then();
+
+    }
 
    @EventListener(ApplicationReadyEvent.class)
     public void consume(){

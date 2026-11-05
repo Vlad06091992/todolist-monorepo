@@ -13,6 +13,7 @@ import {
   ProducerRecord,
 } from 'kafkajs';
 import { KAFKA_TOKEN } from './kafka.token';
+import { GigaChatSummarization } from './giga-chat';
 
 @Injectable()
 export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
@@ -27,7 +28,10 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
   //
   // }
 
-  constructor(@Inject(KAFKA_TOKEN) private readonly kafka: Kafka) {
+  constructor(
+    @Inject(KAFKA_TOKEN) private readonly kafka: Kafka,
+    private readonly gigaChatSummarization: GigaChatSummarization,
+  ) {
     this.consumer = this.kafka.consumer({ groupId: 'nestjs-kafka' });
     this.producer = this.kafka.producer();
   }
@@ -35,12 +39,25 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
     await this.consume(
       { topics: ['test'] },
       {
-        eachMessage: ({ topic, partition, message }): any => {
+        eachMessage: ({ topic, partition, message, ...rest }): any => {
+          debugger;
+
+          const p = message?.value?.toString();
+
           console.log({
-            value: message?.value?.toString(),
+            value: p,
             topic: topic.toString(),
             partition: partition.toString(),
           });
+
+          const res = this.gigaChatSummarization.mapToReport(JSON.parse(p || ''))
+
+          const chatMessage = res.payload;
+          this.gigaChatSummarization
+            .sendMessageWithPrompt(chatMessage)
+            .then((result) => {
+              console.log('ОТВЕТ ОТ ГИГАЧАТА:', result);
+            });
 
           this.produce({
             topic: 'SCHEDULER_SENDING_TASKS',

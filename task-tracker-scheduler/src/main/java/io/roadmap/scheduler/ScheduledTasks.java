@@ -30,15 +30,20 @@ public class ScheduledTasks {
     }
 
 
-//    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 30000)
     public void reauest() {
         System.out.println("mock request");
-       Flux<TaskResponse> res = tasksService.sendRequest("7b2f2dee-f009-42b2-b77d-1046a71cb593", "2025-11-03T14:30");
+       Flux<SummaryResponse> res = tasksService.sendRequest("7b2f2dee-f009-42b2-b77d-1046a71cb593", "2026-11-02T14:30");
 
        //block для отладки
-       List<TaskResponse> hz = res.collectList().block();
-        log.info("ответ через block(): {}", hz);
+       List<SummaryResponse> hz = res.collectList().block();
+//        log.info("ответ через block(): {}", hz);
 
+
+        //public void sendMessageToTopic() {
+    kafkaExample.send(res).subscribe();
+//    System.out.println("mock request");
+//        tasksService.sendRequest();
 
         /// ///////// то что придёт сюда
         /*
@@ -97,11 +102,11 @@ public class ScheduledTasks {
 
     }
 
-@Scheduled(fixedRate = 10000)
-public void sendMessageToTopic() {
-    kafkaExample.send();
-//    System.out.println("mock request");
-//        tasksService.sendRequest();
-}
+//@Scheduled(fixedRate = 10000)
+//public void sendMessageToTopic() {
+//    kafkaExample.send();
+////    System.out.println("mock request");
+////        tasksService.sendRequest();
+//}
 
 }

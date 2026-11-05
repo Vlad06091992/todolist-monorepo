@@ -40,7 +40,7 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Task> orders = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
 
     @PrePersist
     private void onCreate() {

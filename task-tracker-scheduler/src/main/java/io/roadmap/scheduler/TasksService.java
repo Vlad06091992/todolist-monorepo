@@ -23,21 +23,20 @@ public class TasksService {
         this.webClient = WebClient.builder().build();
     }
 
-    public Flux<TaskResponse> sendRequest(String userId, String date) {
+    public Flux<SummaryResponse> sendRequest(String userId, String date) {
         log.info("userId: {}", userId);
         log.info("date: {}", date);
 
-        Flux<TaskResponse> response = webClient.get()
+        Flux<SummaryResponse> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
                         .host("localhost")
                         .port(8080)
-                        .path("/tasks/get-finished-tasks-after-date")   // без "?"
-                        .queryParam("userId", userId)
+                        .path("/tasks/get-finished-tasks-after-date")
                         .queryParam("date", date)
                         .build())
                 .retrieve()
-                .bodyToFlux(TaskResponse.class);
+                .bodyToFlux(SummaryResponse.class);
 
         return response;
     }

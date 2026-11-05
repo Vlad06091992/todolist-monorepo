@@ -56,9 +56,17 @@ public class TasksController {
         return tasksService.getAllByUserId(((JWTAuthenticationManager.Credentials) authentication.getCredentials()).getId());
     }
 
+//    @GetMapping("/get-finished-tasks-after-date")
+//    public Flux<TaskResponse> getFinishedTasksAfterDate(@Valid @RequestParam String userId, String date) {
+//        return tasksService.getFinishedTasksAfterDate(UUID.fromString(userId), LocalDateTime.parse(date));
+//    }
+
     @GetMapping("/get-finished-tasks-after-date")
-    public Flux<TaskResponse> getFinishedTasksAfterDate(@Valid @RequestParam String userId, String date) {
-        return tasksService.getFinishedTasksAfterDate(UUID.fromString(userId), LocalDateTime.parse(date));
+//    public void getUsersForReport(@Valid @RequestParam String userId, String date) {
+//    public Flux<UserWithTasksResponse> getUsersForReport(@Valid @RequestParam String userId, String date) {
+    public Flux<UserWithTasksResponse> getUsersForReport(@Valid @RequestParam String date) {
+//        return tasksService.getUsersWithTasksForReport(LocalDateTime.parse(date));
+        return tasksService.getUsersWithTasksForReport(LocalDateTime.parse(date));
     }
 
 }

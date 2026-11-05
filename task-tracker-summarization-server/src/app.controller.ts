@@ -3,9 +3,33 @@ import { AppService } from './app.service';
 import { GigaChatSummarization } from './giga-chat';
 import { UserDTO } from './interfaces';
 
-interface CreateMessageDto {
+
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
+  IsNotEmpty,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class CreateMessageDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(10)
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => UserDTO)
   payload: UserDTO[];
 }
+
+// interface CreateMessageDto {
+//   payload: UserDTO[];
+// }
+
+
 
 @Controller('/dev')
 export class AppController {

@@ -1,7 +1,11 @@
-export interface UserDTO {
+export class UserDTO {
   login: string;
   completedLast24h: string[];
   activeTasks: number;
+}
+
+export interface ReportPayload {
+  payload: UserDTO[];
 }
 
 export interface ReportDTO {
@@ -11,4 +15,10 @@ export interface ReportDTO {
 
 export interface Summarization {
   sendMessageWithPrompt(usersDto: UserDTO[]): Promise<ReportDTO[]>;
+}
+
+export interface UserSummary {
+  id: string;
+  login: string;
+  tasks: string[];
 }
