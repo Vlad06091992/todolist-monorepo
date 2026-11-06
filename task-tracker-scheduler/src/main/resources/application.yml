@@ -13,8 +13,7 @@ spring:
       acks: all
       key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#      properties:
-#        spring.json.type.mapping: userCreated:io.roadmap.todolistmonorepo.dto.KafkaCreateUserMessage
-
+      properties:
+        spring.json.type.mapping: emailReport:io.roadmap.scheduler.ReportDTO
 server:
   port: 8075

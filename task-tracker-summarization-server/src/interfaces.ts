@@ -20,5 +20,6 @@ export interface Summarization {
 export interface UserSummary {
   id: string;
   login: string;
+  email: string;
   tasks: string[];
 }

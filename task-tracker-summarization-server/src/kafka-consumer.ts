@@ -50,23 +50,36 @@ export class ConsumerService implements OnModuleInit, OnApplicationShutdown {
             partition: partition.toString(),
           });
 
-          const res = this.gigaChatSummarization.mapToReport(JSON.parse(p || ''))
+          const res = this.gigaChatSummarization.mapToReport(
+            JSON.parse(p || ''),
+          );
 
           const chatMessage = res.payload;
           this.gigaChatSummarization
             .sendMessageWithPrompt(chatMessage)
             .then((result) => {
               console.log('ОТВЕТ ОТ ГИГАЧАТА:', result);
+
+              this.produce({
+                topic: 'SCHEDULER_SENDING_TASKS',
+                messages: [
+                  {
+                    value: JSON.stringify(result),
+                  },
+                ],
+              });
             });
 
-          this.produce({
-            topic: 'SCHEDULER_SENDING_TASKS',
-            messages: [
-              {
-                value: 'Hello from nestJS',
-              },
-            ],
-          });
+          // this.produce({
+          //   topic: 'SCHEDULER_SENDING_TASKS',
+          //   messages: [
+          //     {
+          //       value: 'Hello from nestJS',
+          //
+          //       value: 'Hello from nestJS',
+          //     },
+          //   ],
+          // });
         },
       },
     );

@@ -25,7 +25,7 @@ public interface UsersRepository extends JpaRepository<User, UUID> {
 List<User> findAll ();
 
     @Query(value = """
-    SELECT u.id, u.login, STRING_AGG(t.description, ', ') AS summary
+    SELECT u.id, u.login, u.email, STRING_AGG(t.description, ', ') AS summary
     FROM users u
     JOIN tasks t ON u.id = t.user_id AND t.is_finished = true
     WHERE t.updated_at >= :fromDate

@@ -36,7 +36,7 @@ public class ScheduledTasks {
        Flux<SummaryResponse> res = tasksService.sendRequest("7b2f2dee-f009-42b2-b77d-1046a71cb593", "2026-11-02T14:30");
 
        //block для отладки
-       List<SummaryResponse> hz = res.collectList().block();
+//       List<SummaryResponse> hz = res.collectList().block();
 //        log.info("ответ через block(): {}", hz);
 
 

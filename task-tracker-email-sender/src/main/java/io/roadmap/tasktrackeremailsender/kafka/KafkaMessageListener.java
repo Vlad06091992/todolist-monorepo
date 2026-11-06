@@ -1,6 +1,7 @@
 package io.roadmap.tasktrackeremailsender.kafka;
 
 import io.roadmap.tasktrackeremailsender.controllers.EmailController;
+import io.roadmap.tasktrackeremailsender.dto.EmailReportForUser;
 import io.roadmap.tasktrackeremailsender.dto.KafkaCreateUserMessage;
 import io.roadmap.tasktrackeremailsender.services.EmailService;
 import org.slf4j.Logger;
@@ -27,6 +28,18 @@ public class KafkaMessageListener {
         try {
             emailService.sendSimpleEmail(message.email(), "Successfully registration", "Hello " + message.login() + " !");
             LOG.info("User created: {}", message);
+        } catch (MailException mailException) {
+            LOG.error("Error while sending out email", mailException);
+        }
+    }
+
+
+    @KafkaHandler
+    public void sendReport(EmailReportForUser message) {
+
+        try {
+            emailService.sendSimpleEmail(message.email(), "Tasks report", "Hello " + message.message() + " !");
+            LOG.info("Send report: {}", message);
         } catch (MailException mailException) {
             LOG.error("Error while sending out email", mailException);
         }

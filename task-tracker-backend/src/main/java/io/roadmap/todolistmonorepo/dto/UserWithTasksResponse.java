@@ -7,6 +7,7 @@ import java.util.List;
 public record UserWithTasksResponse (
         String login,
         String id,
+        String email,
         List<String> tasks
 ){
 
