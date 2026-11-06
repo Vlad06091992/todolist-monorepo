@@ -58,7 +58,8 @@ public class KafkaExample {
                         System.out.println(el);
                         emails.put(el.login, el.email);
                     });
-                    return kafkaService.sendMessage("test", m);
+                    //todo вынести топик в переменные env
+                    return kafkaService.sendMessage("task-tracker-scheduler.reports.requests", m);
                 })
                 .then();
 

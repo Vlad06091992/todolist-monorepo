@@ -1,8 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AppService } from './app.service';
-import { GigaChatSummarization } from './giga-chat';
+import { Body, Controller, Post } from '@nestjs/common';
+import { SummarizationService } from './summarization.service';
 import { UserDTO } from './interfaces';
-
 
 import {
   ArrayMaxSize,
@@ -25,18 +23,9 @@ export class CreateMessageDto {
   payload: UserDTO[];
 }
 
-// interface CreateMessageDto {
-//   payload: UserDTO[];
-// }
-
-
-
 @Controller('/dev')
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly chat: GigaChatSummarization,
-  ) {}
+  constructor(private readonly chat: SummarizationService) {}
 
   @Post('/send')
   async sendMessage(@Body() createDto: CreateMessageDto) {

@@ -11,7 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class GigaChatSummarization implements Summarization {
+export class SummarizationService implements Summarization {
   httpsAgent: Agent;
   client: GigaChat;
   private promptTemplate = `Для этих пользователей сформируй отчет для отправки по емайл о
@@ -39,10 +39,7 @@ export class GigaChatSummarization implements Summarization {
   }
 
   public mapToReport(userSummaries: UserSummary[]): ReportPayload {
-
-    console.log("mapToReport userSummaries:", userSummaries);
-
-    debugger
+    console.log('mapToReport userSummaries:', userSummaries);
 
     return {
       payload: userSummaries.map((us) => ({
