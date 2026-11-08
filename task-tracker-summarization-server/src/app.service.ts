@@ -32,7 +32,7 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
     this.topics = {
       topics: [
         this.configService.getOrThrow<string>(
-          'KAFKA_TOPIC_TASK_TRACKER_SCHEDULER_REPORTS_REQUESTS',
+          'APP_KAFKA_TOPIC_REPORTS_SUMMARIES_REQUESTED',
         ),
       ],
     };
@@ -67,8 +67,8 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
 
         this.produce({
           // topic: 'SCHEDULER_SENDING_TASKS',
-          topic:  this.configService.getOrThrow<string>(
-            'KAFKA_TOPIC_TASK_TRACKER_SCHEDULER_REPORTS_REQUESTS',
+          topic: this.configService.getOrThrow<string>(
+            'APP_KAFKA_TOPIC_REPORTS_SUMMARIES_COMPLETED',
           ),
           messages: [
             {
