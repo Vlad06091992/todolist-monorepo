@@ -49,6 +49,8 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
         const messageFromTasksTrackerScheduler =
           message?.value?.toString() || '';
 
+        const headers = message?.headers;
+
         this.logger.log({
           value: messageFromTasksTrackerScheduler,
           topic: topic.toString(),
@@ -73,6 +75,7 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
           messages: [
             {
               value: JSON.stringify(result),
+              headers,
             },
           ],
         });

@@ -63,6 +63,14 @@ public class SummariesService {
         Flux<ReceiverRecord<Integer, String>> kafkaFlux = KafkaReceiver.create(options).receive();
 
         kafkaFlux.subscribe(record -> {
+            Header correlationHeader = record.headers().lastHeader("CORRELATION_ID");
+
+            if (correlationHeader == null) {
+                // заголовка нет — обработайте (лог, пропуск, ошибка)
+                return;
+            }
+            String id = new String(correlationHeader.value(), StandardCharsets.UTF_8);
+
             ReceiverOffset offset = record.receiverOffset();
             ObjectMapper mapper = new ObjectMapper();
             try {

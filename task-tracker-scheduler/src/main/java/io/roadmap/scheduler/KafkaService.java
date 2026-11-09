@@ -17,12 +17,16 @@ package io.roadmap.scheduler;/*
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.osgi.annotation.bundle.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderRecord;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 //
 ///**
 // * Sample producer application using Reactive API for Kafka.
@@ -45,7 +49,9 @@ public class KafkaService {
 
 
     public <T> Mono<Void> sendMessage(String topic, T message) {
-        return sender.send(makeRecord(topic,message))
+        UUID uuid = UUID.randomUUID();
+        String uuidStr = uuid.toString();
+        return sender.send(makeRecord(topic,message, uuidStr))
                 .doOnNext(r -> log.info("отправка мок сообщения {}", r.toString()))
                 .doOnError(e -> log.error("Ошибка при отправке в топик {}", e))
                 .then();
@@ -55,10 +61,17 @@ public class KafkaService {
         sender.close();
     }
 
-    private <T> Mono<SenderRecord<Integer, T, Integer>> makeRecord(String topic, T payload){
+    private <T> Mono<SenderRecord<Integer, T, String>> makeRecord(String topic, T payload, String correlationId){
+        ProducerRecord<Integer, T> producerRecord = new ProducerRecord<>(topic, payload);
+
+        producerRecord.headers().add(
+                "CORRELATION_ID",
+                correlationId.getBytes(StandardCharsets.UTF_8)
+        );
+
         return   Mono.just(
                 SenderRecord.create(
-                        new ProducerRecord<>(topic, payload),
+                        producerRecord,
                         null
                 )
         );
