@@ -21,6 +21,7 @@ import { ConfigService } from '@nestjs/config';
 export class AppService implements OnModuleInit, OnApplicationShutdown {
   private readonly consumer: Consumer;
   private readonly producer: Producer;
+  private count: number = 0;
   private readonly topics: { topics: string[] };
   private readonly logger = new Logger(AppService.name);
 
@@ -46,7 +47,11 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
 
     const config: ConsumerRunConfig = {
       eachMessage: async ({ topic, partition, message }): Promise<void> => {
+        // eachMessage: async ({ topic, partition, message }): Promise<void> => {
         debugger;
+
+        this.count++;
+
         const messageFromTasksTrackerScheduler =
           message?.value?.toString() || '';
 
@@ -69,8 +74,7 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
         const result = [
           {
             login: 'vlad',
-            message:
-              '(MOCK) Привет, Влад! За последние сутки ты успешно завершил две задачи: почесался и попил квас. Продолжай в том же духе, квасной герой!',
+            message: `(MOCK-${this.count}) Привет, Влад! За последние сутки ты успешно завершил две задачи: почесался и попил квас. Продолжай в том же духе, квасной герой!`,
           },
         ];
 
@@ -97,9 +101,10 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.run(config);
   }
 
-  produce(record: ProducerRecord) {
+  async produce(record: ProducerRecord) {
+    this.logger.log('send message', record);
     debugger;
-    this.producer.send(record);
+    await this.producer.send(record);
   }
 
   async onApplicationShutdown() {

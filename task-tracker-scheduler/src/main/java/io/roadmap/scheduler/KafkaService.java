@@ -48,9 +48,7 @@ public class KafkaService {
     private static final Logger log = LoggerFactory.getLogger(KafkaService.class.getName());
 
 
-    public <T> Mono<Void> sendMessage(String topic, T message) {
-        UUID uuid = UUID.randomUUID();
-        String uuidStr = uuid.toString();
+    public <T> Mono<Void> sendMessage(String topic, T message, String uuidStr) {
         return sender.send(makeRecord(topic,message, uuidStr))
                 .doOnNext(r -> log.info("отправка мок сообщения {}", r.toString()))
                 .doOnError(e -> log.error("Ошибка при отправке в топик {}", e))
