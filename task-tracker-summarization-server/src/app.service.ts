@@ -46,6 +46,7 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
 
     const config: ConsumerRunConfig = {
       eachMessage: async ({ topic, partition, message }): Promise<void> => {
+        debugger;
         const messageFromTasksTrackerScheduler =
           message?.value?.toString() || '';
 
@@ -62,11 +63,18 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
         );
 
         const chatMessage = dataForReport.payload;
-        const result =
-          await this.summarizationService.sendMessageWithPrompt(chatMessage);
+        // const result =
+        //   await this.summarizationService.sendMessageWithPrompt(chatMessage);
+
+        const result = [
+          {
+            login: 'vlad',
+            message:
+              '(MOCK) Привет, Влад! За последние сутки ты успешно завершил две задачи: почесался и попил квас. Продолжай в том же духе, квасной герой!',
+          },
+        ];
 
         this.logger.log('GIGACHAT RESPONSE:', result);
-
         this.produce({
           // topic: 'SCHEDULER_SENDING_TASKS',
           topic: this.configService.getOrThrow<string>(
@@ -90,6 +98,7 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
   }
 
   produce(record: ProducerRecord) {
+    debugger;
     this.producer.send(record);
   }
 

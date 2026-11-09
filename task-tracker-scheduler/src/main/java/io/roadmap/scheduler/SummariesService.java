@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import reactor.kafka.receiver.ReceiverOffset;
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.receiver.ReceiverRecord;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +72,7 @@ public class SummariesService {
                 // заголовка нет — обработайте (лог, пропуск, ошибка)
                 return;
             }
+            // здесь читаем заголовок
             String id = new String(correlationHeader.value(), StandardCharsets.UTF_8);
 
             ReceiverOffset offset = record.receiverOffset();
@@ -82,7 +86,7 @@ public class SummariesService {
                 List<ReportDTO> tasksWithEmails = tasks.stream().map(el -> el.withEmail(emails.get(el.login()))).toList();
                 log.info("tasks for reports {}", tasksWithEmails);
                 //TODO обработка ошибок, нужен ли then и тд
-                tasksWithEmails.forEach(el -> kafkaService.sendMessage(notificationsEmailRequested, el).then().subscribe());
+//                tasksWithEmails.forEach(el -> kafkaService.sendMessage(notificationsEmailRequested, el).then().subscribe());
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }

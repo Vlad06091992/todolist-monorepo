@@ -64,6 +64,7 @@ public class KafkaService {
     private <T> Mono<SenderRecord<Integer, T, String>> makeRecord(String topic, T payload, String correlationId){
         ProducerRecord<Integer, T> producerRecord = new ProducerRecord<>(topic, payload);
 
+        // здесь кладем заголовок
         producerRecord.headers().add(
                 "CORRELATION_ID",
                 correlationId.getBytes(StandardCharsets.UTF_8)
