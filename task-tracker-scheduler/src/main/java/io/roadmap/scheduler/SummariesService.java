@@ -21,6 +21,7 @@ import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.receiver.ReceiverRecord;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SummariesService {
     private static final Logger log = LoggerFactory.getLogger(SummariesService.class.getName());
     private final KafkaService kafkaService;
+    private final int rpcTimeoutSeconds = 30;
 
     private final Map<String, Sinks.One<String>> pending =
             new ConcurrentHashMap<>();
@@ -73,6 +75,7 @@ public class SummariesService {
                     pending.put(correlationId, response);
                     return response.asMono();
                 }))
+
                 .flatMap((r) -> {
                     System.out.println("Получен ответ для RPC: " + r);
                     return r;
@@ -81,6 +84,7 @@ public class SummariesService {
 
 
                 })
+                .timeout(Duration.ofSeconds(rpcTimeoutSeconds))
                 .doFinally(signal -> pending.remove(correlationId));
     }
 
@@ -112,7 +116,7 @@ public class SummariesService {
 
             ReceiverOffset offset = record.receiverOffset();
             ObjectMapper mapper = new ObjectMapper();
-            //код ниже будет выполнятся в продбюсекре, реализуя паттерн RPC, работа будет происходить с Mono, который
+            //код ниже будет выполнятся в продьюсере, реализуя паттерн RPC, работа будет происходить с Mono, который
             // будет создаваться в продьюсере, а здесь будет происходить sink.tryEmitValue(строка 105) для задания значения
             try {
                 List<ReportDTO> tasks = mapper.readValue(
