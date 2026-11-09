@@ -48,9 +48,7 @@ public class KafkaService {
     private static final Logger log = LoggerFactory.getLogger(KafkaService.class.getName());
 
 
-    public <T> Mono<Void> sendMessage(String topic, T message) {
-        UUID uuid = UUID.randomUUID();
-        String uuidStr = uuid.toString();
+    public <T> Mono<Void> sendMessage(String topic, T message, String uuidStr) {
         return sender.send(makeRecord(topic,message, uuidStr))
                 .doOnNext(r -> log.info("отправка мок сообщения {}", r.toString()))
                 .doOnError(e -> log.error("Ошибка при отправке в топик {}", e))
@@ -64,6 +62,7 @@ public class KafkaService {
     private <T> Mono<SenderRecord<Integer, T, String>> makeRecord(String topic, T payload, String correlationId){
         ProducerRecord<Integer, T> producerRecord = new ProducerRecord<>(topic, payload);
 
+        // здесь кладем заголовок
         producerRecord.headers().add(
                 "CORRELATION_ID",
                 correlationId.getBytes(StandardCharsets.UTF_8)

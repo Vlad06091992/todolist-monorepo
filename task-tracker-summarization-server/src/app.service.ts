@@ -21,6 +21,7 @@ import { ConfigService } from '@nestjs/config';
 export class AppService implements OnModuleInit, OnApplicationShutdown {
   private readonly consumer: Consumer;
   private readonly producer: Producer;
+  private count: number = 0;
   private readonly topics: { topics: string[] };
   private readonly logger = new Logger(AppService.name);
 
@@ -46,6 +47,11 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
 
     const config: ConsumerRunConfig = {
       eachMessage: async ({ topic, partition, message }): Promise<void> => {
+        // eachMessage: async ({ topic, partition, message }): Promise<void> => {
+        debugger;
+
+        this.count++;
+
         const messageFromTasksTrackerScheduler =
           message?.value?.toString() || '';
 
@@ -62,11 +68,17 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
         );
 
         const chatMessage = dataForReport.payload;
-        const result =
-          await this.summarizationService.sendMessageWithPrompt(chatMessage);
+        // const result =
+        //   await this.summarizationService.sendMessageWithPrompt(chatMessage);
+
+        const result = [
+          {
+            login: 'vlad',
+            message: `(MOCK-${this.count}) Привет, Влад! За последние сутки ты успешно завершил две задачи: почесался и попил квас. Продолжай в том же духе, квасной герой!`,
+          },
+        ];
 
         this.logger.log('GIGACHAT RESPONSE:', result);
-
         this.produce({
           // topic: 'SCHEDULER_SENDING_TASKS',
           topic: this.configService.getOrThrow<string>(
@@ -89,8 +101,10 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.run(config);
   }
 
-  produce(record: ProducerRecord) {
-    this.producer.send(record);
+  async produce(record: ProducerRecord) {
+    this.logger.log('send message', record);
+    debugger;
+    await this.producer.send(record);
   }
 
   async onApplicationShutdown() {
