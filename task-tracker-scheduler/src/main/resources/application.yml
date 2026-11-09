@@ -17,3 +17,9 @@ spring:
         spring.json.type.mapping: emailReport:io.roadmap.scheduler.ReportDTO
 server:
   port: 8075
+app:
+  kafka:
+    topic:
+      reports-summaries-requested: "reports.summarization.requested"
+      reports-summaries-completed: "reports.summarization.completed"
+      notifications-email-requested: "notifications.email.requested"

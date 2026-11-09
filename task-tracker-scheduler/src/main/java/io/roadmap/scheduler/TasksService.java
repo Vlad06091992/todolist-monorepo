@@ -23,10 +23,8 @@ public class TasksService {
         this.webClient = WebClient.builder().build();
     }
 
-    public Flux<SummaryResponse> sendRequest(String userId, String date) {
-        log.info("userId: {}", userId);
+    public Flux<SummaryResponse> sendRequest(String date) {
         log.info("date: {}", date);
-
         Flux<SummaryResponse> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
