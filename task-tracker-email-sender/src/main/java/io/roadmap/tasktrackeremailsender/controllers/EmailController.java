@@ -1,6 +1,5 @@
 package io.roadmap.tasktrackeremailsender.controllers;
 
-
 import io.roadmap.tasktrackeremailsender.services.EmailService;
 import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
@@ -14,14 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 
-//import jak.mail.MessagingException;
-//import java.io.FileNotFoundException;
-
 @RestController
 @RequestMapping("/email")
 @Profile("dev")
 public class EmailController {
-
     private static final Logger LOG = LoggerFactory.getLogger(EmailController.class);
 
     @Autowired

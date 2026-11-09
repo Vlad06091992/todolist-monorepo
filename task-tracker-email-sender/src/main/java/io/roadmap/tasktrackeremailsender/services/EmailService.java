@@ -23,7 +23,6 @@ public class EmailService {
     private String from;
 
     public void sendSimpleEmail(String toAddress, String subject, String message) {
-
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setFrom(from);
         simpleMailMessage.setTo(toAddress);
@@ -33,7 +32,6 @@ public class EmailService {
     }
 
     public void sendEmailWithAttachment(String toAddress, String subject, String message, String attachment) throws MessagingException, FileNotFoundException, MessagingException {
-
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
         messageHelper.setTo(toAddress);

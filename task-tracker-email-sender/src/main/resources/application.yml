@@ -27,7 +27,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: my-consumer-group
+      group-id: "task-tracker-email-sender"
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -36,3 +36,7 @@ spring:
         userCreated:io.roadmap.tasktrackeremailsender.dto.KafkaCreateUserMessage,
         emailReport:io.roadmap.tasktrackeremailsender.dto.EmailReportForUser
       spring.json.trusted.packages: "io.roadmap.tasktrackeremailsender.dto"
+app:
+  kafka:
+    topic:
+      email-requested: "notifications.email.requested"
