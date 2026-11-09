@@ -129,29 +129,11 @@ public class TasksService {
                 .subscribeOn(dbScheduler);
     }
 
-    public Flux<TaskResponse>  getFinishedTasksAfterDate(UUID userId, LocalDateTime dateTime) {
-
-        log.info("userId: {}",userId);
-        log.info("dateTime: {}",dateTime);
-
-        return Mono
-                .fromCallable(() -> tasksRepository.getFinishedTasksAfterDate(userId, dateTime))
-                .flatMapMany(Flux::fromIterable)
-                .map(t -> taskMapper.toResponse(t, t.getUser().getId().toString(), t.getUser().getLogin(), t.isFinished()))
-                .onErrorResume(e -> switch (e) {
-                    case DataAccessException ex -> Mono.error(new DatabaseException(ex));
-                    default -> Mono.error(new InternalServerException(e.getMessage()));
-                })
-                .subscribeOn(dbScheduler);
-    }
-
     public Flux<UserWithTasksResponse>  getUsersWithTasksForReport(LocalDateTime fromDate) {
-//        log.info("dateTime: {}",dateTime);
-
         return Mono
                 .fromCallable(() -> usersRepository.findAllSummaries(fromDate))
                 .flatMapMany(Flux::fromIterable)
-                .map(t -> usersForReportMapper.usersToReport(t))
+                .map(usersForReportMapper::usersToReport)
                 .onErrorResume(e -> switch (e) {
                     case DataAccessException ex -> Mono.error(new DatabaseException(ex));
                     default -> Mono.error(new InternalServerException(e.getMessage()));

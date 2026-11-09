@@ -32,5 +32,4 @@ List<User> findAll ();
     GROUP BY u.id, u.login
     """, nativeQuery = true)
     List<UserSummary> findAllSummaries(@Param("fromDate") LocalDateTime fromDate);
-
 }

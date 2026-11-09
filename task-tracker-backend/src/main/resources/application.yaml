@@ -35,3 +35,7 @@ spring:
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKey
   expiration-hours: 1
+app:
+  kafka:
+    topic:
+      notifications-email-requested: "notifications.email.requested"

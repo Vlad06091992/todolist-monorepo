@@ -9,6 +9,6 @@ import org.mapstruct.Mapping;
 public abstract class UsersForReportMapper {
 
     @Mapping(target = "tasks",
-            expression = "java(entity.getSummary() == null ? null : UserWithTasksResponse.mapTasks(entity.getSummary()))")
+            expression = "java(entity.getSummary() == null ? null : UserWithTasksResponse.mapTasksToList(entity.getSummary()))")
     public abstract UserWithTasksResponse usersToReport(UserSummary entity);
 }

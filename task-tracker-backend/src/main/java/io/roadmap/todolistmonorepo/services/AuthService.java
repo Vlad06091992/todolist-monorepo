@@ -9,6 +9,7 @@ import io.roadmap.todolistmonorepo.kafka.KafkaService;
 import io.roadmap.todolistmonorepo.mappers.UserMapper;
 import io.roadmap.todolistmonorepo.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,14 @@ import reactor.core.scheduler.Scheduler;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
     private final JWTUtil jwtUtil;
     private final Scheduler dbScheduler;
-    private final UsersRepository usersRepository;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
     private final KafkaService kafkaService;
+    @Value("${app.kafka.topic.notifications-email-requested}")
+    private String notificationsEmailRequested;
 
     public Mono<String> login(AuthRequest authRequest) {
 
@@ -42,15 +43,11 @@ public class AuthService {
     }
 
     public Mono<User> createNewUser(UserCreateRequest userDTO) {
-
         User user = userMapper.toEntity(userDTO);
-
         KafkaCreateUserMessage message = new KafkaCreateUserMessage(user.getLogin(), user.getEmail());
 
-
-        kafkaService
-                .sendMessage("EMAIL_SENDING_TASKS", message)
-                .subscribe();
-        return userService.save(user);
+        return kafkaService
+                .sendMessage(notificationsEmailRequested, message)
+                .then(Mono.defer(() -> userService.save(user)));
     }
 }

@@ -49,9 +49,7 @@ public class JWTAuthenticationManager implements ReactiveAuthenticationManager {
             Credentials credentials = new Credentials(userDetails.getId());
             return new UsernamePasswordAuthenticationToken(
                     userDetails.getLogin(), credentials, Collections.emptyList());
-        }).onErrorResume((e) -> {
-            return Mono.error(new JwtAuthenticationException("Invalid JWT token: " + e.getMessage()));
-        });
+        }).onErrorResume((e) -> Mono.error(new JwtAuthenticationException("Invalid JWT token: " + e.getMessage())));
     }
 
     public ServerAuthenticationConverter authenticationConverter() {

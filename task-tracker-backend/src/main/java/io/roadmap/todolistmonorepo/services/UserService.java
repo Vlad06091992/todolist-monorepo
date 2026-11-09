@@ -25,11 +25,8 @@ public class UserService {
 
     public Mono<User> save(User user) {
         return findByLogin(user.getLogin())
-                .flatMap(u -> {
-                    return Mono.<User>error(new UserAlreadyExistException());
-                })
+                .flatMap(u -> Mono.<User>error(new UserAlreadyExistException()))
                 .switchIfEmpty(Mono.fromCallable(() -> usersRepository.save(user)))
                 .subscribeOn(dbScheduler);
-
     }
 }
