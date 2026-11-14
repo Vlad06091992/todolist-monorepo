@@ -129,15 +129,22 @@ public class TasksService {
                 .subscribeOn(dbScheduler);
     }
 
-    public Flux<UserWithTasksResponse>  getUsersWithTasksForReport(LocalDateTime fromDate) {
+    public Flux<UserWithTasksResponse> getUsersWithTasksForReport(LocalDateTime fromDate, int pageSize, int page) {
+        int offset = (page - 1) * pageSize;
         return Mono
-                .fromCallable(() -> usersRepository.findAllSummaries(fromDate))
+                .fromCallable(() -> usersRepository.findAllSummaries(fromDate, pageSize, offset))
                 .flatMapMany(Flux::fromIterable)
                 .map(usersForReportMapper::usersToReport)
                 .onErrorResume(e -> switch (e) {
                     case DataAccessException ex -> Mono.error(new DatabaseException(ex));
                     default -> Mono.error(new InternalServerException(e.getMessage()));
                 })
+                .subscribeOn(dbScheduler);
+    }
+
+    public Mono<Long> getCount(LocalDateTime fromDate) {
+        return Mono
+                .fromCallable(() -> usersRepository.countAllSummaries(fromDate))
                 .subscribeOn(dbScheduler);
     }
 }

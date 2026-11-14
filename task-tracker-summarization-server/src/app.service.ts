@@ -52,34 +52,48 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
 
         this.count++;
 
+        const raw = message?.value?.toString() || '';
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const parse = JSON.parse(raw);
+        const email = raw ? parse[0].email : undefined;
+        debugger;
         const messageFromTasksTrackerScheduler =
           message?.value?.toString() || '';
 
         const headers = message?.headers;
+        debugger;
+        if (headers) {
+          console.log('ПОЛУЧЕНО СООБЩЕНИЕ' + new Date().toString());
+          console.log('CORRELATION_ID', headers['CORRELATION_ID']?.toString());
+          console.log('COUNT_NUMBER', headers['COUNT_NUMBER']?.toString());
+          debugger;
+        }
 
-        this.logger.log({
-          value: messageFromTasksTrackerScheduler,
-          topic: topic.toString(),
-          partition: partition.toString(),
-        });
+        // this.logger.log({
+        //   value: messageFromTasksTrackerScheduler,
+        //   topic: topic.toString(),
+        //   partition: partition.toString(),
+        // });
 
         const dataForReport = this.summarizationService.mapToReport(
           JSON.parse(messageFromTasksTrackerScheduler || ''),
         );
 
         const chatMessage = dataForReport.payload;
-        // const result =
-        //   await this.summarizationService.sendMessageWithPrompt(chatMessage);
+        const result =
+          await this.summarizationService.sendMessageWithPrompt(chatMessage);
 
-        const result = [
-          {
-            login: 'vlad',
-            message: `(MOCK-${this.count}) Привет, Влад! За последние сутки ты успешно завершил две задачи: почесался и попил квас. Продолжай в том же духе, квасной герой!`,
-          },
-        ];
+        // const result = [
+        //   {
+        //     login: 'vlad',
+        //     message: `(MOCK-${this.count}) Привет, Влад! ${email} За последние сутки ты успешно завершил две задачи: почесался и попил квас. Продолжай в том же духе, квасной герой!`,
+        //   },
+        // ];
 
-        this.logger.log('GIGACHAT RESPONSE:', result);
-        this.produce({
+        debugger
+
+        // this.logger.log('GIGACHAT RESPONSE:', result);
+       await this.produce({
           // topic: 'SCHEDULER_SENDING_TASKS',
           topic: this.configService.getOrThrow<string>(
             'APP_KAFKA_TOPIC_REPORTS_SUMMARIES_COMPLETED',
@@ -101,13 +115,30 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
     await this.consumer.run(config);
   }
 
+
+
   async produce(record: ProducerRecord) {
-    this.logger.log('send message', record);
-    debugger;
-    await this.producer.send(record);
+    // this.logger.log('send message', record);
+    this.producer.send(record);
+    // console.log("CALL time" + new Date().toString());
+
+    // setTimeout(
+    //   () => {
+    //     // console.log("SEND time" + new Date().toString());
+    //     this.producer.send(record);
+    //   },
+    //   this.delay(5, 15),
+    // );
   }
 
   async onApplicationShutdown() {
     await this.consumer.disconnect();
+  }
+
+  private delay(min: number, max: number): number {
+    const seconds = Math.floor(Math.random() * (max - min + 1)) + min;
+    const ms = seconds * 1000;
+    console.log(`SEND через ${ms} мс`);
+    return ms;
   }
 }

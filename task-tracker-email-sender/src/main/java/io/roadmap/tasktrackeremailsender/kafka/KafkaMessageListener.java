@@ -24,7 +24,7 @@ public class KafkaMessageListener {
     @KafkaHandler
     public void onUserCreated(KafkaCreateUserMessage message) {
         try {
-            emailService.sendSimpleEmail(message.email(), "Successfully registration", "Hello " + message.login() + " !");
+            emailService.sendSimpleEmail(message.email(), "Successfully registration", "Hello " + message.login() + " !", true);
             LOG.info("User created: {}", message);
         } catch (MailException mailException) {
             LOG.error("Error while sending out email", mailException);
@@ -34,7 +34,7 @@ public class KafkaMessageListener {
     @KafkaHandler
     public void sendReport(EmailReportForUser message) {
         try {
-            emailService.sendSimpleEmail(message.email(), "Tasks report", "Hello " + message.message() + " !");
+            emailService.sendSimpleEmail(message.email(), "Tasks report", "Hello " + message.message() + " !", true);
             LOG.info("Send report: {}", message);
         } catch (MailException mailException) {
             LOG.error("Error while sending out email", mailException);

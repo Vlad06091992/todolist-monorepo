@@ -7,11 +7,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
-
 @Service
 public class TasksService {
 
@@ -23,18 +18,37 @@ public class TasksService {
         this.webClient = WebClient.builder().build();
     }
 
-    public Flux<SummaryResponse> sendRequest(String date) {
+    public Flux<UserSummaryForReport> getDataForReports(String date, int page, int pageSize) {
         log.info("date: {}", date);
-        Flux<SummaryResponse> response = webClient.get()
+        Flux<UserSummaryForReport> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
                         .host("localhost")
                         .port(8080)
                         .path("/tasks/get-finished-tasks-after-date")
                         .queryParam("date", date)
+                        .queryParam("page", page)
+                        .queryParam("pageSize", pageSize)
                         .build())
                 .retrieve()
-                .bodyToFlux(SummaryResponse.class);
+                .bodyToFlux(UserSummaryForReport.class);
+
+        return response;
+    }
+
+    public Mono<Long> getCount(String date) {
+        log.info("date: {}", date);
+        Mono<Long> response = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host("localhost")
+                        .port(8080)
+                        .path("/tasks/count")
+                        .queryParam("date", date)
+                        .queryParam("page")
+                        .build())
+                .retrieve()
+                .bodyToMono(Long.class);
 
         return response;
     }
