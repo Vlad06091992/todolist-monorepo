@@ -24,12 +24,32 @@ public interface UsersRepository extends JpaRepository<User, UUID> {
 @Query("SELECT DISTINCT u.id, u.login, STRING_AGG(t.description, ', ') as summary FROM User u JOIN Task t on u.id = t.user.id and t.isFinished = true" )
 List<User> findAll ();
 
+//    @Query(value = """
+//    SELECT u.id, u.login, u.email, STRING_AGG(t.description, ', ') AS summary
+//    FROM users u
+//    JOIN tasks t ON u.id = t.user_id AND t.is_finished = true
+//    WHERE t.updated_at >= :fromDate
+//    GROUP BY u.id, u.login
+//    """, nativeQuery = true)
+//    List<UserSummary> findAllSummaries(@Param("fromDate") LocalDateTime fromDate);
+
     @Query(value = """
     SELECT u.id, u.login, u.email, STRING_AGG(t.description, ', ') AS summary
     FROM users u
     JOIN tasks t ON u.id = t.user_id AND t.is_finished = true
     WHERE t.updated_at >= :fromDate
     GROUP BY u.id, u.login
+    ORDER BY id ASC
+    LIMIT :limit OFFSET :offset;
     """, nativeQuery = true)
-    List<UserSummary> findAllSummaries(@Param("fromDate") LocalDateTime fromDate);
+    List<UserSummary> findAllSummaries(@Param("fromDate") LocalDateTime fromDate, @Param("limit") int limit, @Param("offset") int offset);
+
+    @Query(value = """
+    SELECT COUNT(DISTINCT u.id)
+    FROM users u
+    JOIN tasks t ON u.id = t.user_id AND t.is_finished = true
+    WHERE t.updated_at >= :fromDate;
+    """, nativeQuery = true)
+    long countAllSummaries(@Param("fromDate") LocalDateTime fromDate);
+
 }

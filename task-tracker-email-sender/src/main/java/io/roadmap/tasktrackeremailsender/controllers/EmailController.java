@@ -26,7 +26,7 @@ public class EmailController {
     public @ResponseBody ResponseEntity sendSimpleEmail(@PathVariable("user-email") String email) {
 
         try {
-            emailService.sendSimpleEmail(email, "Welcome", "This is a welcome email for your!!");
+            emailService.sendSimpleEmail(email, "Welcome", "This is a welcome email for your!!", true);
         } catch (MailException mailException) {
             LOG.error("Error while sending out email", mailException);
             return new ResponseEntity<>("Unable to send email", HttpStatus.INTERNAL_SERVER_ERROR);

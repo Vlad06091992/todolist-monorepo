@@ -22,13 +22,19 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    public void sendSimpleEmail(String toAddress, String subject, String message) {
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setFrom(from);
-        simpleMailMessage.setTo(toAddress);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(message);
-        emailSender.send(simpleMailMessage);
+    public void sendSimpleEmail(String toAddress, String subject, String message, boolean isTest) {
+
+        if(isTest){
+            System.out.println("(MOCK) message: " + message + " was sent");
+            return;
+        }
+
+//        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+//        simpleMailMessage.setFrom(from);
+//        simpleMailMessage.setTo(toAddress);
+//        simpleMailMessage.setSubject(subject);
+//        simpleMailMessage.setText(message);
+//        emailSender.send(simpleMailMessage);
     }
 
     public void sendEmailWithAttachment(String toAddress, String subject, String message, String attachment) throws MessagingException, FileNotFoundException, MessagingException {

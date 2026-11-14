@@ -44,6 +44,8 @@ import java.util.UUID;
 @Service
 public class KafkaService {
 
+    private int count_number = 0;
+
     private final KafkaSender sender;
     private static final Logger log = LoggerFactory.getLogger(KafkaService.class.getName());
 
@@ -61,12 +63,11 @@ public class KafkaService {
 
     private <T> Mono<SenderRecord<Integer, T, String>> makeRecord(String topic, T payload, String correlationId){
         ProducerRecord<Integer, T> producerRecord = new ProducerRecord<>(topic, payload);
-
         // здесь кладем заголовок
         producerRecord.headers().add(
                 "CORRELATION_ID",
                 correlationId.getBytes(StandardCharsets.UTF_8)
-        );
+        ).add("COUNT_NUMBER",String.valueOf(++this.count_number).getBytes());
 
         return   Mono.just(
                 SenderRecord.create(
