@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1794972882934-1" author="Admin">
+        <createSequence incrementBy="50" sequenceName="revinfo_seq" startValue="1"/>
+    </changeSet>
+    <changeSet id="1794972882934-2" author="Admin">
+        <createTable tableName="event_outbox">
+            <column name="event_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="pk_event_outbox"/>
+            </column>
+            <column name="attempts" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1794972882934-3" author="Admin">
+        <createTable tableName="revchanges">
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entityname" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1794972882934-4" author="Admin">
+        <createTable tableName="revinfo">
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_revinfo"/>
+            </column>
+            <column name="revtstmp" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1794972882934-5" author="Admin">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="revchanges"
+                                 constraintName="fk_revchanges_on_default_tracking_modified_entities_changelog"
+                                 referencedColumnNames="rev" referencedTableName="revinfo"/>
+    </changeSet>
+
+</databaseChangeLog>

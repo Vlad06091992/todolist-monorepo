@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1795019761426-3" author="Admin">
+        <createTable tableName="event_inbox">
+            <column name="event_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="pk_event_inbox"/>
+            </column>
+            <column name="processed_at " type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1795019761426-4" author="Admin">
+        <addColumn tableName="event_outbox">
+            <column name="attempts" type="INT"/>
+            <column name="created_at" type="DATETIME"/>
+            <column name="id" type="UUID"/>
+            <column name="last_error" type="TEXT"/>
+            <column name="payload" type="jsonb"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="updated_at" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1795019761426-5" author="Admin">
+        <addNotNullConstraint columnName="attempts" tableName="event_outbox"/>
+    </changeSet>
+    <changeSet id="1795019761426-7" author="Admin">
+        <addNotNullConstraint columnName="created_at" tableName="event_outbox"/>
+    </changeSet>
+    <changeSet id="1795019761426-11" author="Admin">
+        <addNotNullConstraint columnName="payload" tableName="event_outbox"/>
+    </changeSet>
+    <changeSet id="1795019761426-13" author="Admin">
+        <addNotNullConstraint columnName="status" tableName="event_outbox"/>
+    </changeSet>
+    <changeSet id="1795019761426-15" author="Admin">
+        <addNotNullConstraint columnName="updated_at" tableName="event_outbox"/>
+    </changeSet>
+    <changeSet id="1795019761426-17" author="Admin">
+        <dropColumn columnName="event_id" tableName="event_outbox"/>
+    </changeSet>
+    <changeSet id="1795019761426-2" author="Admin">
+        <addPrimaryKey columnNames="id" constraintName="pk_event_outbox" tableName="event_outbox"/>
+    </changeSet>
+
+</databaseChangeLog>

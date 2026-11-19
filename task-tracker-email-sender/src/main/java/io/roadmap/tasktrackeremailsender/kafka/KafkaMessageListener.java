@@ -2,10 +2,11 @@ package io.roadmap.tasktrackeremailsender.kafka;
 
 import io.roadmap.tasktrackeremailsender.dto.EmailReportForUser;
 import io.roadmap.tasktrackeremailsender.dto.KafkaCreateUserMessage;
+import io.roadmap.tasktrackeremailsender.repositories.EventInboxRepository;
 import io.roadmap.tasktrackeremailsender.services.EmailService;
+import io.roadmap.tasktrackeremailsender.services.ProcessedEventsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.MailException;
@@ -17,18 +18,22 @@ import org.springframework.stereotype.Component;
         groupId = "${spring.kafka.consumer.group-id}"
 )
 public class KafkaMessageListener {
-    @Autowired
     EmailService emailService;
+    EventInboxRepository eventInboxRepository;
+    ProcessedEventsService processedEventsService;
+
     private static final Logger LOG = LoggerFactory.getLogger(KafkaMessageListener.class);
+
+    public KafkaMessageListener(EmailService emailService, EventInboxRepository eventInboxRepository, ProcessedEventsService processedEventsService) {
+        this.emailService = emailService;
+        this.eventInboxRepository = eventInboxRepository;
+        this.processedEventsService = processedEventsService;
+
+    }
 
     @KafkaHandler
     public void onUserCreated(KafkaCreateUserMessage message) {
-        try {
-            emailService.sendSimpleEmail(message.email(), "Successfully registration", "Hello " + message.login() + " !", true);
-            LOG.info("User created: {}", message);
-        } catch (MailException mailException) {
-            LOG.error("Error while sending out email", mailException);
-        }
+      processedEventsService.registerEvent(message);
     }
 
     @KafkaHandler
