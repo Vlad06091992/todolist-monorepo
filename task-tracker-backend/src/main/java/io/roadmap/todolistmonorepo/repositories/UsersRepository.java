@@ -16,10 +16,22 @@ import java.util.UUID;
 
 @Repository
 public interface UsersRepository extends JpaRepository<User, UUID> {
+
+
     Optional<User> findByLogin(String login);
-//    List<Task> findByIsFinished(boolean isFinished);
-//@EntityGraph(attributePaths = {"tasks"})
-//    List<User> findAll ();
+    Optional<User> findByLoginOrEmail(
+            String login,
+             String email
+    );
+
+//    @Query("""
+//    SELECT u FROM User u
+//    WHERE u.login = :login OR u.email = :email
+//    """)
+//    Optional<User> findByLoginOrEmail(
+//            @Param("login") String login,
+//            @Param("email") String email
+//    );
 
 @Query("SELECT DISTINCT u.id, u.login, STRING_AGG(t.description, ', ') as summary FROM User u JOIN Task t on u.id = t.user.id and t.isFinished = true" )
 List<User> findAll ();
