@@ -2,17 +2,15 @@ package io.roadmap.todolistmonorepo.services;
 
 import io.roadmap.todolistmonorepo.configuration.JWTUtil;
 import io.roadmap.todolistmonorepo.dto.AuthRequest;
-import io.roadmap.todolistmonorepo.dto.KafkaCreateUserMessage;
 import io.roadmap.todolistmonorepo.dto.UserCreateRequest;
 import io.roadmap.todolistmonorepo.entities.User;
 import io.roadmap.todolistmonorepo.kafka.KafkaService;
 import io.roadmap.todolistmonorepo.mappers.UserMapper;
-import io.roadmap.todolistmonorepo.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
@@ -25,8 +23,8 @@ public class AuthService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
     private final KafkaService kafkaService;
-    @Value("${app.kafka.topic.notifications-email-requested}")
-    private String notificationsEmailRequested;
+    private final TransactionTemplate transactionTemplate;
+
 
     public Mono<String> login(AuthRequest authRequest) {
 
@@ -42,12 +40,8 @@ public class AuthService {
                 .subscribeOn(dbScheduler);
     }
 
-    public Mono<User> createNewUser(UserCreateRequest userDTO) {
+    public Mono<User> register(UserCreateRequest userDTO) {
         User user = userMapper.toEntity(userDTO);
-        KafkaCreateUserMessage message = new KafkaCreateUserMessage(user.getLogin(), user.getEmail());
-
-        return kafkaService
-                .sendMessage(notificationsEmailRequested, message)
-                .then(Mono.defer(() -> userService.save(user)));
+        return userService.createUserWithSendingEmail(user);
     }
 }

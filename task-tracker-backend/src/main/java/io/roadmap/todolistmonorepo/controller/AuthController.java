@@ -26,7 +26,7 @@ public class AuthController {
     }
     @PostMapping("/sign-up")
     public Mono<ResponseEntity<String>> signup(@Valid @RequestBody UserCreateRequest userDTO) {
-        return authService.createNewUser(userDTO)
+        return authService.register(userDTO)
                 .map(savedUser -> ResponseEntity.ok("User signed up successfully"));
     }
 
