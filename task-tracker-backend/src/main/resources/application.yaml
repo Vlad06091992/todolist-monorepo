@@ -1,3 +1,15 @@
+logging:
+  level:
+    # 1. Вывод самого SQL-запроса
+    org.hibernate.SQL: DEBUG
+    # 2. Вывод значений параметров (для Hibernate 6+)
+    org.hibernate.orm.jdbc.bind: TRACE
+    # 3. Вывод результатов извлечения данных (опционально)
+    org.hibernate.orm.jdbc.extract: TRACE
+    # 4. Логирование пула соединений HikariCP (для отладки соединений)
+    com.zaxxer.hikari: DEBUG
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.springframework.transaction.interceptor: TRACE
 spring:
   application:
     name: "todo"
@@ -12,7 +24,7 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 20000
   jpa:
-    show-sql: true
+#    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -30,6 +42,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
+        max.block.ms: 5000
+        delivery.timeout.ms: 1000
+        request.timeout.ms: 300
+        retries: 1
         spring.json.type.mapping: userCreated:io.roadmap.todolistmonorepo.dto.KafkaCreateUserMessage
 
 jwt:

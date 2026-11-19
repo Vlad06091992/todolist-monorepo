@@ -1,3 +1,15 @@
+logging:
+  level:
+    # 1. Вывод самого SQL-запроса
+    org.hibernate.SQL: DEBUG
+    # 2. Вывод значений параметров (для Hibernate 6+)
+    org.hibernate.orm.jdbc.bind: TRACE
+    # 3. Вывод результатов извлечения данных (опционально)
+    org.hibernate.orm.jdbc.extract: TRACE
+    # 4. Логирование пула соединений HikariCP (для отладки соединений)
+    com.zaxxer.hikari: DEBUG
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.springframework.transaction.interceptor: TRACE
 server:
   port: 8077
 
@@ -6,7 +18,26 @@ spring:
     import: optional:file:.env[.properties]
   application:
     name: task-tracker-email-sender
-
+  datasource:
+    url: jdbc:postgresql://localhost:5440/email-sender-db
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+  jpa:
+    #    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: changelog-master.xml
   mail:
     host: smtp.mail.ru
     port: 465
