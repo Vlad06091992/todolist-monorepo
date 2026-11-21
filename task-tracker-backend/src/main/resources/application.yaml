@@ -11,6 +11,8 @@ logging:
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG
     org.springframework.transaction.interceptor: TRACE
 spring:
+  webflux:
+      base-path: /api
   application:
     name: "todo"
   datasource:
