@@ -1,0 +1,54 @@
+// Страница регистрации: центрированная карточка на весь вьюпорт — зеркально странице входа.
+// Цвета/типографика — только токены Material 3 (azure-blue, см. styles.scss).
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: 24px;
+  background-color: var(--mat-sys-surface-dim);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+.register-card__footer {
+  display: block;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+
+  a {
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.register-form__field {
+  width: 100%;
+}
+
+.register-form__submit {
+  height: 48px;
+  margin-top: 8px;
+  font: var(--mat-sys-label-large);
+}

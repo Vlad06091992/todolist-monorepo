@@ -1,0 +1,74 @@
+<!-- Страница задач: закреплённый тулбар (сессия) + центрированная колонка списка.
+     Над списком — строка с кнопкой «Добавить» (диалог создания).
+     Состояние — только async pipe (zoneless): loading$ скрывает список,
+     пустой список (и не загрузка) — русская заглушка. -->
+
+<div class="tasks-page">
+  <mat-toolbar class="tasks-toolbar">
+    <span class="tasks-toolbar__title">Task Tracker</span>
+    <span class="tasks-toolbar__spacer"></span>
+    @if (authService.currentUser$ | async; as user) {
+      <span class="tasks-toolbar__user">Вы вошли как: {{ user.login }}</span>
+      <button
+        mat-icon-button
+        type="button"
+        class="tasks-toolbar__logout"
+        aria-label="Выйти"
+        (click)="logout()"
+      >
+        <mat-icon>logout</mat-icon>
+      </button>
+    }
+  </mat-toolbar>
+
+  <main class="tasks-content">
+    <div class="tasks-content__header">
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class="tasks-content__add"
+        (click)="openAddDialog()"
+      >
+        Добавить
+      </button>
+    </div>
+
+    @if (tasksService.loading$ | async) {
+      <div class="tasks-content__spinner">
+        <mat-progress-spinner mode="indeterminate" [diameter]="32" />
+      </div>
+    } @else {
+      <mat-list class="tasks-list">
+        @for (task of tasksService.tasks$ | async; track task.id) {
+          <mat-list-item class="tasks-list__item">
+            <div class="tasks-list__row">
+              <mat-checkbox
+                class="tasks-list__checkbox"
+                [checked]="task.isFinished"
+                (change)="setFinished(task, $event)"
+              />
+              <span
+                class="tasks-list__description"
+                [class.tasks-list__description--done]="task.isFinished"
+              >
+                {{ task.description }}
+              </span>
+              <button
+                mat-icon-button
+                type="button"
+                class="tasks-list__delete"
+                aria-label="Удалить задачу"
+                (click)="deleteTask(task)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+        } @empty {
+          <p class="tasks-list__empty">Задач пока нет</p>
+        }
+      </mat-list>
+    }
+  </main>
+</div>

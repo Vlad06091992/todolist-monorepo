@@ -1,0 +1,108 @@
+// Страница задач: закреплённый тулбар (surface) + центрированная колонка списка
+// на фоне surface-dim — зеркально страницам входа/регистрации.
+// Цвета/типографика — только токены Material 3 (azure-blue, см. styles.scss).
+
+:host {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  background-color: var(--mat-sys-surface-dim);
+}
+
+// --- Тулбар ---
+
+.tasks-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  gap: 16px;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.tasks-toolbar__title {
+  font: var(--mat-sys-title-large);
+}
+
+.tasks-toolbar__spacer {
+  flex: 1 1 auto;
+}
+
+.tasks-toolbar__user {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+.tasks-toolbar__logout {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// --- Контентная колонка ---
+
+.tasks-content {
+  max-width: 640px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+// --- Шапка колонки: кнопка «Добавить» над карточкой списка ---
+
+.tasks-content__header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.tasks-content__spinner {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+// --- Список задач: контейнер-«карточка» без теней, только обводка ---
+
+.tasks-list {
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-medium);
+  overflow: hidden;
+}
+
+// Строка задачи: чекбокс — текст — удаление. Свой flex-контейнер внутри
+// mat-list-item, чтобы не зависеть от внутренних классов Material.
+.tasks-list__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0; // итоговая высота строки — 48px (M3 one-line)
+}
+
+.tasks-list__description {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--mat-sys-body-large);
+}
+
+// Выполненная задача — перечёркнута и приглушена.
+.tasks-list__description--done {
+  text-decoration: line-through;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Пустой список (и не идёт загрузка) — дружелюбная заглушка внутри карточки.
+.tasks-list__empty {
+  margin: 0;
+  padding: 32px 16px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-large);
+  text-align: center;
+}

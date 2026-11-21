@@ -1,0 +1,46 @@
+<main class="login-page">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Вход</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="login-form__field">
+          <mat-label>Логин</mat-label>
+          <input matInput formControlName="login" autocomplete="username" />
+          @if (form.controls.login.invalid && form.controls.login.touched) {
+            <mat-error>Обязательное поле</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="login-form__field">
+          <mat-label>Пароль</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <mat-error>Обязательное поле</mat-error>
+          }
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="login-form__submit"
+          [disabled]="form.invalid || (submitting$ | async)"
+        >
+          Войти
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="login-card__footer">
+      Нет аккаунта? <a routerLink="/register">Зарегистрироваться</a>
+    </mat-card-footer>
+  </mat-card>
+</main>
