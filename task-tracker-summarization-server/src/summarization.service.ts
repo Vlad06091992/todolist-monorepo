@@ -2,18 +2,17 @@ import GigaChat from 'gigachat';
 import { Agent } from 'node:https';
 import { Injectable } from '@nestjs/common';
 import {
+  PromptUser,
   ReportDTO,
-  ReportPayload,
-  Summarization,
-  UserDTO,
+  Summarizer,
   UserSummary,
-} from './interfaces';
+} from './contracts';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SummarizationService implements Summarization {
-  httpsAgent: Agent;
-  client: GigaChat;
+export class SummarizationService implements Summarizer {
+  private readonly httpsAgent: Agent;
+  private readonly gigaChatClient: GigaChat;
   private promptTemplate = `Для этих пользователей сформируй отчет для отправки по емайл о
      сделанных задачах за сутки, отчет должен быть сгенерирован
       в формате json(массив с объектами) в ответ на payload, у объекта есть 
@@ -23,13 +22,13 @@ export class SummarizationService implements Summarization {
 
   constructor(private configService: ConfigService) {
     const credentials =
-      this.configService.getOrThrow<string>('CHAT_CREDENTIALS');
+      this.configService.getOrThrow<string>('GIGACHAT_CREDENTIALS');
     this.httpsAgent = new Agent({
       rejectUnauthorized: false, // Отключает проверку корневого сертификата
       // Читайте ниже как можно включить проверку сертификата НУЦ Минцифры
     });
 
-    this.client = new GigaChat({
+    this.gigaChatClient = new GigaChat({
       timeout: 600_000,
       model: 'GigaChat-2-Pro', // Это имя будет работать на новом хосте
       credentials,
@@ -38,39 +37,33 @@ export class SummarizationService implements Summarization {
     });
   }
 
-  public mapToReport(userSummaries: UserSummary[]): ReportPayload {
-    console.log('mapToReport userSummaries:', userSummaries);
-
-    return {
-      payload: userSummaries.map((us) => ({
-        activeTasks: us.tasks.length,
-        completedLast24h: us.tasks,
-        login: us.login,
-      })),
-    };
+  public buildPromptPayload(userSummaries: UserSummary[]): PromptUser[] {
+    return userSummaries.map((userSummary) => ({
+      activeTasks: userSummary.tasks.length,
+      completedLast24h: userSummary.tasks,
+      login: userSummary.login,
+    }));
   }
 
-  public async sendMessageWithPrompt(
-    usersDto: UserDTO[],
-  ): Promise<ReportDTO[]> {
-    const prompt = this.generatePrompt(usersDto);
-    const result = await this.client.chat({
+  public async generateReport(users: PromptUser[]): Promise<ReportDTO[]> {
+    const prompt = this.generatePrompt(users);
+    const result = await this.gigaChatClient.chat({
       messages: [{ role: 'user', content: prompt }],
     });
-    const message = this.extractArray(result?.choices[0].message.content);
+    const message = this.extractJsonArray(result?.choices[0].message.content);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return JSON.parse(message);
   }
 
-  private generatePrompt(usersDto: UserDTO[]): string {
-    return this.promptTemplate + `payload:  ${JSON.stringify(usersDto)}`;
+  private generatePrompt(users: PromptUser[]): string {
+    return this.promptTemplate + `payload:  ${JSON.stringify(users)}`;
   }
 
-  private extractArray(str: string | undefined): string {
-    if (!str) return '';
-    const start = str.indexOf('[');
-    const end = str.lastIndexOf(']');
+  private extractJsonArray(raw: string | undefined): string {
+    if (!raw) return '';
+    const start = raw.indexOf('[');
+    const end = raw.lastIndexOf(']');
     if (start === -1 || end === -1) return '';
-    return str.slice(start, end + 1);
+    return raw.slice(start, end + 1);
   }
 }

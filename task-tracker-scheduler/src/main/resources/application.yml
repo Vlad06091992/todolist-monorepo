@@ -1,23 +1,25 @@
 spring:
   application:
-    name: "todo"
+    name: "task-tracker-scheduler"
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: my-sceduler-group
+      group-id: task-tracker-scheduler
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      client-id: scheduler-id
+      client-id: task-tracker-scheduler
       acks: all
       key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: emailReport:io.roadmap.scheduler.ReportDTO
+        spring.json.type.mapping: emailReportRequested:io.roadmap.tasktracker.scheduler.report.EmailReportRequestedEvent
 server:
   port: 8075
 app:
+  backend:
+    base-url: "http://localhost:8080/api/"
   kafka:
     topic:
       reports-summaries-requested: "reports.summarization.requested"

@@ -6,7 +6,7 @@ plugins {
 
 group = 'io.roadmap'
 version = '0.0.1-SNAPSHOT'
-description = 'todolist-monorepo'
+description = 'task-tracker-backend'
 
 java {
     toolchain {

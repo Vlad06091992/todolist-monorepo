@@ -1,6 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { SummarizationService } from './summarization.service';
-import { UserDTO } from './interfaces';
+import { PromptUser } from './contracts';
 
 import {
   ArrayMaxSize,
@@ -12,27 +12,28 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class CreateMessageDto {
+export class DevSummarizationRequest {
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMinSize(1)
   @ArrayMaxSize(10)
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => UserDTO)
-  payload: UserDTO[];
+  @Type(() => PromptUser)
+  payload: PromptUser[];
 }
 
 @Controller('/dev')
 export class AppController {
-  constructor(private readonly chat: SummarizationService) {}
+  private readonly logger = new Logger(AppController.name);
+  constructor(private readonly summarizationService: SummarizationService) {}
 
   @Post('/send')
-  async sendMessage(@Body() createDto: CreateMessageDto) {
+  async generateReport(@Body() createDto: DevSummarizationRequest) {
     try {
-      return await this.chat.sendMessageWithPrompt(createDto.payload);
+      return await this.summarizationService.generateReport(createDto.payload);
     } catch (e) {
-      console.error(e);
+      this.logger.error('Report generation failed', e);
     }
   }
 }

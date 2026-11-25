@@ -64,9 +64,9 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     properties:
       spring.json.type.mapping: >
-        userCreated:io.roadmap.tasktrackeremailsender.dto.KafkaCreateUserMessage,
-        emailReport:io.roadmap.tasktrackeremailsender.dto.EmailReportForUser
-      spring.json.trusted.packages: "io.roadmap.tasktrackeremailsender.dto"
+        userRegistered:io.roadmap.tasktracker.emailsender.event.UserRegisteredEvent,
+        emailReportRequested:io.roadmap.tasktracker.emailsender.event.EmailReportRequestedEvent
+      spring.json.trusted.packages: "io.roadmap.tasktracker.emailsender.event"
 app:
   kafka:
     topic:

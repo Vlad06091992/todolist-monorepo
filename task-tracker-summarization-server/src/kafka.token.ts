@@ -1,1 +1,1 @@
-export const KAFKA_TOKEN = 'KAFKA_TOKEN';
+export const KAFKA_CLIENT = 'KAFKA_CLIENT';

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <!-- Чистка схемы:
+         1) колонки "processed_at " (с пробелом на конце) — созданы по ошибке в 18-02/18-03,
+            сущностями не мапятся, NOT NULL на них ломает вставки;
+         2) мёртвый Envers-артефакт из 18-01 (revinfo/revchanges/revinfo_seq) —
+            hibernate-envers в проекте нет, @Audited сущностей нет. -->
+    <changeSet id="drop-spaced-processed-at-from-event-outbox" author="Admin">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <columnExists tableName="event_outbox" columnName="processed_at "/>
+        </preConditions>
+        <dropColumn tableName="event_outbox" columnName="processed_at "/>
+    </changeSet>
+    <changeSet id="drop-spaced-processed-at-from-event-inbox" author="Admin">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <columnExists tableName="event_inbox" columnName="processed_at "/>
+        </preConditions>
+        <dropColumn tableName="event_inbox" columnName="processed_at "/>
+    </changeSet>
+    <changeSet id="drop-dead-envers-revchanges" author="Admin">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="revchanges"/>
+        </preConditions>
+        <dropTable tableName="revchanges"/>
+    </changeSet>
+    <changeSet id="drop-dead-envers-revinfo" author="Admin">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="revinfo"/>
+        </preConditions>
+        <dropTable tableName="revinfo"/>
+    </changeSet>
+    <changeSet id="drop-dead-envers-seq" author="Admin">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <sequenceExists sequenceName="revinfo_seq"/>
+        </preConditions>
+        <dropSequence sequenceName="revinfo_seq"/>
+    </changeSet>
+
+</databaseChangeLog>

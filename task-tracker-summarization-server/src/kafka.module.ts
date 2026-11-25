@@ -1,18 +1,25 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { KAFKA_TOKEN } from './kafka.token';
+import { ConfigService } from '@nestjs/config';
+import { KAFKA_CLIENT } from './kafka.token';
 import { Kafka } from 'kafkajs';
 
 @Module({
-  imports: [ConfigModule.forRoot()],
   providers: [
     {
-      provide: KAFKA_TOKEN,
-      useFactory: () => {
-        return new Kafka({ clientId: 'my-app', brokers: ['localhost:9092'] });
-      },
+      provide: KAFKA_CLIENT,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        new Kafka({
+          clientId: configService.get<string>(
+            'KAFKA_CLIENT_ID',
+            'task-tracker-summarization-server',
+          ),
+          brokers: configService
+            .get<string>('KAFKA_BROKERS', 'localhost:9092')
+            .split(','),
+        }),
     },
   ],
-  exports: [KAFKA_TOKEN],
+  exports: [KAFKA_CLIENT],
 })
 export class KafkaModule {}

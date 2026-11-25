@@ -25,13 +25,13 @@ import { TasksService } from '../../core/tasks.service';
 function noWhitespace(control: AbstractControl): ValidationErrors | null {
   debugger
   const value = typeof control.value === 'string' ? control.value : '';
-  debugger
+  // debugger
   let newVar = value.trim().length === 0 ? { whitespace: true } : null;
-  debugger
-  // return newVar;
-  return {
-    whitespace: false
-  };
+  // debugger
+  return newVar;
+  // return {
+  //   whitespace: false
+  // };
 }
 
 /**
@@ -55,10 +55,15 @@ function noWhitespace(control: AbstractControl): ValidationErrors | null {
     <h2 mat-dialog-title>Новая задача</h2>
 
     <mat-dialog-content>
+      <div [formGroup]="form">
       <mat-form-field appearance="outline" class="add-task-dialog__field">
         <mat-label>Описание задачи</mat-label>
-        <textarea   #textInput
-                    (input)="onChange(textInput.value)"  matInput rows="3" formControlName="description"></textarea>
+        <pre style="background: #eee; padding: 8px; font-size: 11px;">
+          touched: {{ form.controls.description.touched }}
+          invalid: {{ form.controls.description.invalid }}
+          errors:  {{ JSON.stringify(form.controls.description.errors)  }}
+        </pre>
+        <textarea matInput rows="3" formControlName="description"></textarea>
         @if (form.controls.description.invalid && form.controls.description.touched) {
           @if (form.controls.description.errors?.['server']; as serverMessage) {
             <mat-error>{{ serverMessage }}</mat-error>
@@ -67,6 +72,7 @@ function noWhitespace(control: AbstractControl): ValidationErrors | null {
           }
         }
       </mat-form-field>
+      </div>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
@@ -130,6 +136,12 @@ export class AddTaskDialogComponent {
     console.log(args);
   }
 
+  ngOnInit() {
+    this.form.controls.description.valueChanges.subscribe(val => {
+      console.log('Текущее значение:', val);
+    });
+  }
+
   /**
    * Ошибки create: форма {description: msg} — инлайн под полем (setErrors({server})),
    * текст ошибки — дополнительно снекбаром; сброс submitting уже сделан в finalize.
@@ -142,4 +154,6 @@ export class AddTaskDialogComponent {
     }
     this.snackBar.open(extractErrorMessage(err), undefined, { duration: 4000 });
   }
+
+  protected readonly JSON = JSON;
 }

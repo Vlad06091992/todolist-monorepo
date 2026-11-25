@@ -12,9 +12,9 @@ import {
   Producer,
   ProducerRecord,
 } from 'kafkajs';
-import { KAFKA_TOKEN } from './kafka.token';
 import { SummarizationService } from './summarization.service';
 import { ConfigService } from '@nestjs/config';
+import { KAFKA_CLIENT } from './kafka.token';
 
 @Injectable()
 export class AppService implements OnModuleInit, OnApplicationShutdown {
@@ -28,14 +28,13 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
 
       const headers = message?.headers;
 
-      const dataForReport = this.summarizationService.mapToReport(
+      const dataForReport = this.summarizationService.buildPromptPayload(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         JSON.parse(messageFromTasksTrackerScheduler || ''),
       );
 
-      const chatMessage = dataForReport.payload;
       const result =
-        await this.summarizationService.sendMessageWithPrompt(chatMessage);
+        await this.summarizationService.generateReport(dataForReport);
       await this.produce({
         topic: this.configService.getOrThrow<string>(
           'APP_KAFKA_TOPIC_REPORTS_SUMMARIES_COMPLETED',
@@ -51,7 +50,7 @@ export class AppService implements OnModuleInit, OnApplicationShutdown {
   };
 
   constructor(
-    @Inject(KAFKA_TOKEN) private readonly kafka: Kafka,
+    @Inject(KAFKA_CLIENT) private readonly kafka: Kafka,
     private readonly summarizationService: SummarizationService,
     private configService: ConfigService,
   ) {

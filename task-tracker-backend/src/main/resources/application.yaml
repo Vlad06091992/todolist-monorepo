@@ -14,7 +14,7 @@ spring:
   webflux:
       base-path: /api
   application:
-    name: "todo"
+    name: "task-tracker-backend"
   datasource:
     url: jdbc:postgresql://localhost:5440/todolist
     username: postgres
@@ -48,7 +48,7 @@ spring:
         delivery.timeout.ms: 1000
         request.timeout.ms: 300
         retries: 1
-        spring.json.type.mapping: userCreated:io.roadmap.todolistmonorepo.dto.KafkaCreateUserMessage
+        spring.json.type.mapping: userRegistered:io.roadmap.tasktracker.backend.dto.UserRegisteredEvent
 
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKey
