@@ -4,20 +4,6 @@
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": [
-      "ts-jest",
-      {
-        "tsconfig": {
-          "module": "commonjs",
-          "moduleResolution": "node",
-          "resolvePackageJsonExports": false,
-          "allowJs": true,
-          "esModuleInterop": true
-        }
-      }
-    ]
-  },
-  "transformIgnorePatterns": [
-    "node_modules[\\\\/](?!(gigachat|@nestjs[\\\\/]config|@nestjs[\\\\/]common|@nestjs[\\\\/]core)[\\\\/])"
-  ]
+    "^.+\\.(t|j)s$": "ts-jest"
+  }
 }

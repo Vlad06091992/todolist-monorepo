@@ -42,7 +42,6 @@ describe('SummarizationService', () => {
 
   function createChatMock() {
     return jest.fn(async (request: unknown): Promise<GigaChatResponse> => {
-      debugger;
       chatRequest = request;
       throw new Error(
         'Ответ GigaChat должен быть замокан: chat.mockResolvedValueOnce(...)',
@@ -121,21 +120,25 @@ describe('SummarizationService', () => {
     });
 
     it('отправляет в GigaChat промпт с payload и шаблоном в роли user', async () => {
-      chat.mockResolvedValueOnce({
-        choices: [{ message: { content: '[]' } }],
-      });
+      // Важно: mockResolvedValueOnce подменяет реализацию ЦЕЛИКОМ — дефолтная
+      // не выполняется и chatRequest остаётся undefined. Поэтому once-реализация
+      // сама записывает полученный запрос.
+      chat.mockImplementationOnce(
+        async (request: unknown): Promise<GigaChatResponse> => {
+          chatRequest = request;
+          return { choices: [{ message: { content: '[]' } }] };
+        },
+      );
 
       await service.generateReport(expectedPromptUsers);
 
-      expect(chat).toHaveBeenCalledTimes(1);
-
-      const [request] = chat.mock.calls[0];
-
-      expect(request).toEqual({
+      expect(chatRequest).toEqual({
         messages: [
           {
             role: 'user',
-            content: expect.stringContaining(JSON.stringify(expectedPromptUsers)),
+            content: expect.stringContaining(
+              JSON.stringify(expectedPromptUsers),
+            ),
           },
         ],
       });
@@ -148,9 +151,9 @@ describe('SummarizationService', () => {
 
       // Текущее поведение: extractJsonArray вернёт '' и JSON.parse('') кинет
       // SyntaxError. Фиксируем, чтобы заметить изменение при рефакторинге.
-      await expect(service.generateReport(expectedPromptUsers)).rejects.toThrow(
-        SyntaxError,
-      );
+      await expect(
+        service.generateReport(expectedPromptUsers),
+      ).rejects.toThrow(SyntaxError);
     });
 
     it('падает с SyntaxError, если у ответа модели нет текста', async () => {
@@ -158,9 +161,9 @@ describe('SummarizationService', () => {
         choices: [{ message: {} }],
       });
 
-      await expect(service.generateReport(expectedPromptUsers)).rejects.toThrow(
-        SyntaxError,
-      );
+      await expect(
+        service.generateReport(expectedPromptUsers),
+      ).rejects.toThrow(SyntaxError);
     });
   });
 });

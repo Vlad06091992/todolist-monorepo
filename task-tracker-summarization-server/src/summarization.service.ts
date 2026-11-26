@@ -47,14 +47,9 @@ export class SummarizationService implements Summarizer {
 
   public async generateReport(users: PromptUser[]): Promise<ReportDTO[]> {
     const prompt = this.generatePrompt(users);
-    debugger
     const result = await this.gigaChatClient.chat({
       messages: [{ role: 'user', content: prompt }],
     });
-
-
-    debugger
-
     const message = this.extractJsonArray(result?.choices[0].message.content);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return JSON.parse(message);
