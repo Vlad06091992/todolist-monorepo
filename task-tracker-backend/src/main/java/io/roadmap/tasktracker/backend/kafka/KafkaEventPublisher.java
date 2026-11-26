@@ -34,6 +34,12 @@ public class KafkaEventPublisher {
                         );
                     }
                 })
+                // Per-record delivery failures arrive as SenderResult.exception() inside a normal
+                // onNext (not as a stream error), so without this step .then() would complete
+                // successfully and the outbox relay would mark the event SENT despite the failure.
+                .flatMap(result -> result.exception() != null
+                        ? Mono.error(result.exception())
+                        : Mono.<Void>empty())
                 .doOnError(e ->
                         log.error("Ошибка отправки в Kafka, topic={}", topic, e)
                 )
