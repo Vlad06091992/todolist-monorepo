@@ -72,7 +72,8 @@ public class ReportJobs {
 //    @Scheduled(cron = "0 0/3 13 * * *")
     @Scheduled(fixedRate = 20000)
     public void generateNextReportBatch() {
-        planReportBatches();
+//здесь только для отладки
+        //        planReportBatches();
         if (preparationFailed) {
             log.error("preparationFailed, generateNextReportBatch not started {}", dateFormat.format(new Date()));
             return;
